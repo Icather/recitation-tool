@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文言文背诵助手</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>文言文背诵助手</h1>
+        
+        <div class="input-section">
+            <label for="input-text">输入文言文内容：</label>
+            <textarea id="input-text" placeholder="请在此输入需要处理的文言文..."></textarea>
+        </div>
+        
+        <div class="control-section">
+            <button id="process-btn">处理文本</button>
+            
+            <div class="settings">
+                <div class="setting-item">
+                    <label for="interval">间隔字数：</label>
+                    <input type="number" id="interval" min="1" value="3">
+                </div>
+                
+                <div class="setting-item">
+                    <label for="start">起始字数：</label>
+                    <input type="number" id="start" min="0" value="1">
+                </div>
+                
+                <div class="setting-item">
+                    <label for="random-ratio">随机挖空频率：</label>
+                    <input type="number" id="random-ratio" min="1" max="100" value="30">
+                    <span>%</span>
+                </div>
+                
+                <div class="setting-item">
+                    <label for="regular-mode">
+                        <input type="checkbox" id="regular-mode" checked>
+                        常规挖空
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <label for="random-mode">
+                        <input type="checkbox" id="random-mode" checked>
+                        随机挖空
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <label for="first-char-mode">
+                        <input type="checkbox" id="first-char-mode">
+                        仅显示句首字
+                    </label>
+                </div>
+                
+
+            </div>
+        </div>
+        
+        <div class="output-section">
+            <label for="output-text">处理结果：</label>
+            <textarea id="output-text" readonly></textarea>
+        </div>
+    </div>
+    
+    <!-- 文言文预设内容选择区 -->
+    <div class="classic-texts-section">
+        <h3>文言文预设内容</h3>
+        <div class="texts-selector">
+            <!-- 左侧篇目选择区 -->
+            <div class="texts-list">
+                <h4>上海高考必背篇目</h4>
+                <ul id="texts-list-ul">
+                    <!-- 通过JavaScript动态填充 -->
+                </ul>
+            </div>
+            
+            <!-- 右侧段落选择区 -->
+            <div class="paragraphs-list">
+                <h4>段落列表</h4>
+                <div id="paragraphs-container">
+                    <p class="placeholder-text">请先选择一篇文言文</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="classic_texts.js"></script>
+    <script src="script.js"></script>
+    
+    <div class="instructions">
+        <h3>使用说明</h3>
+        <ol>
+            <li>在输入框中粘贴需要处理的文言文内容</li>
+            <li>设置间隔字数、起始字数和随机挖空频率</li>
+            <li>选择挖空模式（常规挖空和/或随机挖空）</li>
+            <li>点击"处理文本"按钮生成背诵材料</li>
+            <li>在输出框中查看挖空后的文本用于背诵</li>
+        </ol>
+    </div>
+    
+    <div class="footer">
+        <p>祝你早日背完陈情表</p>
+    </div>
+</body>
+</html>

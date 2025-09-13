@@ -1,0 +1,57 @@
+# Logs
+# === 基本忽略规则 ===
+
+# 操作系统生成的文件
+Thumbs.db
+Thumbs.db:encryptable
+Desktop.ini
+$RECYCLE.BIN/
+ehthumbs.db
+
+# 编辑器配置文件
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# 临时文件和备份文件
+*.tmp
+*.temp
+*.bak
+*.old
+*.swp
+*.swo
+*~
+.cache/
+.temp/
+
+# 日志文件
+*.log
+
+# 环境变量文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# === 项目特定忽略规则 ===
+
+# 此项目为纯HTML/CSS/JS静态网站，不需要额外的构建工具或依赖管理
+# 如需使用npm等工具管理依赖，可取消注释以下行
+
+# # 依赖目录
+# node_modules/
+
+# # 包管理器锁文件
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+# shrinkwrap.json
