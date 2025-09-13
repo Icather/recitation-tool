@@ -242,35 +242,121 @@ function loadSampleText() {
 // 文言文预设内容选择区相关DOM引用
 const textsListUl = document.getElementById('texts-list-ul');
 const paragraphsContainer = document.getElementById('paragraphs-container');
+const textsListView = document.getElementById('texts-list-view');
+const paragraphsListView = document.getElementById('paragraphs-list-view');
+const backToTextsBtn = document.getElementById('back-to-texts');
+const currentTextTitle = document.getElementById('current-text-title');
+const semesterSelector = document.createElement('select');
+semesterSelector.id = 'semester-selector';
 
-// 初始化文言文篇目列表
-function initTextsList() {
+// 初始化学期选择器
+function initSemesterSelector() {
+    // 在篇目列表标题下方添加学期选择器
+    const textsListHeader = textsListView.querySelector('h4');
+    if (textsListHeader && !document.getElementById('semester-selector')) {
+        semesterSelector.innerHTML = '<option value="all">全部学期</option>';
+        
+        // 收集所有学期并去重
+        const semesters = new Set();
+        if (window.classicTexts && window.classicTexts.length > 0) {
+            window.classicTexts.forEach(text => {
+                // 只收集真正的学期分类项
+                if (text.category === '学期') {
+                    semesters.add(text.title);
+                }
+            });
+        }
+        
+        // 添加学期选项
+        semesters.forEach(semester => {
+            const option = document.createElement('option');
+            option.value = semester;
+            option.textContent = semester;
+            semesterSelector.appendChild(option);
+        });
+        
+        // 添加选择事件
+        semesterSelector.addEventListener('change', function() {
+            initTextsList(this.value);
+        });
+        
+        // 添加到DOM
+        textsListHeader.parentNode.insertBefore(semesterSelector, textsListHeader.nextSibling);
+    }
+}
+
+// 初始化文言文篇目列表，支持按学期筛选
+function initTextsList(selectedSemester = 'all') {
     // 清空列表
     textsListUl.innerHTML = '';
     
     // 遍历数据库，创建列表项
     if (window.classicTexts && window.classicTexts.length > 0) {
-        window.classicTexts.forEach(text => {
-            const li = document.createElement('li');
-            li.textContent = `${text.title} - ${text.author}`;
-            li.dataset.textId = text.id;
+        // 过滤出选中学期的篇目
+        const filteredTexts = window.classicTexts.filter(text => {
+            // 跳过学期分类项
+            if (text.category === '学期') return false;
             
-            // 添加点击事件
-            li.addEventListener('click', function() {
-                // 移除其他项的选中状态
-                document.querySelectorAll('#texts-list-ul li').forEach(item => {
-                    item.classList.remove('selected');
+            // 全部学期或匹配的学期
+            return selectedSemester === 'all' || text.category.startsWith(selectedSemester);
+        });
+        
+        if (filteredTexts.length > 0) {
+            filteredTexts.forEach(text => {
+                const li = document.createElement('li');
+                
+                // 创建更丰富的条目内容
+                const textInfo = document.createElement('div');
+                textInfo.className = 'text-info';
+                
+                const titleElement = document.createElement('div');
+                titleElement.className = 'text-title';
+                titleElement.textContent = text.title;
+                
+                const authorElement = document.createElement('div');
+                authorElement.className = 'text-author';
+                authorElement.textContent = text.author || '未知作者';
+                
+                const categoryElement = document.createElement('div');
+                categoryElement.className = 'text-category';
+                categoryElement.textContent = text.category || '';
+                
+                // 添加描述（如果有）
+                if (text.description) {
+                    const descriptionElement = document.createElement('div');
+                    descriptionElement.className = 'text-description';
+                    descriptionElement.textContent = text.description;
+                    textInfo.appendChild(descriptionElement);
+                }
+                
+                textInfo.appendChild(titleElement);
+                textInfo.appendChild(authorElement);
+                textInfo.appendChild(categoryElement);
+                li.appendChild(textInfo);
+                
+                li.dataset.textId = text.id;
+                
+                // 添加点击事件
+                li.addEventListener('click', function() {
+                    // 移除其他项的选中状态
+                    document.querySelectorAll('#texts-list-ul li').forEach(item => {
+                        item.classList.remove('selected');
+                    });
+                    
+                    // 添加当前项的选中状态
+                    this.classList.add('selected');
+                    
+                    // 显示对应的段落列表
+                    showParagraphs(text);
                 });
                 
-                // 添加当前项的选中状态
-                this.classList.add('selected');
-                
-                // 显示对应的段落列表
-                showParagraphs(text);
+                textsListUl.appendChild(li);
             });
-            
+        } else {
+            const li = document.createElement('li');
+            li.textContent = '当前学期暂无篇目';
             textsListUl.appendChild(li);
-        });
+        }
     } else {
         const li = document.createElement('li');
         li.textContent = '加载文言文篇目失败';
@@ -278,8 +364,35 @@ function initTextsList() {
     }
 }
 
+// 切换视图函数
+function switchView(fromView, toView) {
+    fromView.classList.remove('active');
+    toView.classList.add('active');
+}
+
+// 返回篇目列表
+function backToTextsList() {
+    switchView(paragraphsListView, textsListView);
+    backToTextsBtn.classList.add('hidden');
+    currentTextTitle.textContent = '请选择一篇文言文';
+    
+    // 移除所有选中状态
+    document.querySelectorAll('#texts-list-ul li').forEach(item => {
+        item.classList.remove('selected');
+    });
+}
+
 // 显示选中篇目对应的段落列表
 function showParagraphs(text) {
+    // 更新导航标题
+    currentTextTitle.textContent = `${text.title} - ${text.author}`;
+    
+    // 显示返回按钮
+    backToTextsBtn.classList.remove('hidden');
+    
+    // 切换到段落列表视图
+    switchView(textsListView, paragraphsListView);
+    
     // 清空容器
     paragraphsContainer.innerHTML = '';
     
@@ -310,6 +423,20 @@ function showParagraphs(text) {
             
             // 可以选择是否自动处理
             // processText();
+            
+            // 创建并显示提示信息
+            const originalText = selectBtn.textContent;
+            const originalBgColor = selectBtn.style.backgroundColor;
+            
+            // 修改按钮文字和背景色作为提示
+            selectBtn.textContent = '已选择此段落';
+            selectBtn.style.backgroundColor = '#FF9800';
+            
+            // 2秒后恢复原状
+            setTimeout(function() {
+                selectBtn.textContent = originalText;
+                selectBtn.style.backgroundColor = originalBgColor;
+            }, 2000);
         });
         
         paragraphCard.appendChild(selectBtn);
@@ -332,15 +459,35 @@ function showParagraphs(text) {
         
         // 可以选择是否自动处理
         // processText();
+        
+        // 创建并显示提示信息
+        const originalText = selectAllBtn.textContent;
+        const originalBgColor = selectAllBtn.style.backgroundColor;
+        
+        // 修改按钮文字和背景色作为提示
+        selectAllBtn.textContent = '已选择全文';
+        selectAllBtn.style.backgroundColor = '#FF9800';
+        
+        // 2秒后恢复原状
+        setTimeout(function() {
+            selectAllBtn.textContent = originalText;
+            selectAllBtn.style.backgroundColor = originalBgColor;
+        }, 2000);
     });
     
     paragraphsContainer.prepend(selectAllBtn);
 }
 
+// 添加返回按钮的点击事件
+backToTextsBtn.addEventListener('click', backToTextsList);
+
 // 页面加载完成后执行
 window.addEventListener('DOMContentLoaded', function() {
     // 自动加载示例文本，方便用户直接查看效果
     loadSampleText();
+    
+    // 初始化学期选择器
+    initSemesterSelector();
     
     // 初始化文言文篇目列表
     initTextsList();

@@ -2,7 +2,7 @@
 
 一个帮助用户学习和背诵文言文的网页工具，通过替换文本中的部分汉字为空白占位符或仅显示句首字来辅助记忆，特别适用于上海高考语文文言文背诵练习。
 
-网页链接：[https://recitation-tool.pages.dev/]
+网页链接：[https://recitation-tool.pages.dev/](https://recitation-tool.pages.dev/)
 
 ## 功能特点
 
@@ -14,6 +14,7 @@
 - **自定义设置**：可设置间隔字数、起始字数和随机挖空频率，灵活调整挖空模式
 - **响应式设计**：在桌面端和移动端均能提供良好的用户体验
 - **键盘快捷键**：支持 Ctrl/Cmd + Enter 快速处理文本
+- **交互反馈**：点击"选择全文"按钮时提供视觉反馈提示
 - **使用说明**：内置详细的使用指南和功能说明
 
 ## 使用方法
@@ -43,8 +44,10 @@
 ├── index.html          # 主页面
 ├── style.css           # 样式文件
 ├── script.js           # 功能脚本
-├── classic_texts.js    # 文言文预设内容数据文件
+├── classic_texts_final.js    # 文言文预设内容数据文件
 ├── .gitignore          # Git忽略规则
+├── CNAME               # 域名配置文件
+├── LICENSE.markdown    # 许可证文件
 └── README.md           # 项目说明文档
 ```
 
@@ -58,3 +61,16 @@
 - 随机挖空功能使用Fisher-Yates洗牌算法确保挖空位置分布均匀
 - 文言文预设内容选择区分为左右两侧：左侧显示篇目列表，右侧显示段落列表
 - 所有输入验证已优化为仅在点击生成按钮时触发，提高用户体验
+- "选择全文"按钮在点击时会显示视觉反馈，提示用户操作已完成
+
+## 浏览器兼容性
+
+该工具在以下主流浏览器中均能正常运行：
+- Google Chrome（推荐使用最新版本）
+- Mozilla Firefox
+- Apple Safari
+- Microsoft Edge
+
+## 许可证
+
+本项目采用 Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International 许可证，详见 LICENSE.markdown 文件。

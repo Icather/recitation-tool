@@ -69,17 +69,25 @@
     <!-- 文言文预设内容选择区 -->
     <div class="classic-texts-section">
         <h3>文言文预设内容</h3>
-        <div class="texts-selector">
-            <!-- 左侧篇目选择区 -->
-            <div class="texts-list">
+        
+        <!-- 导航区域 -->
+        <div class="texts-navigation">
+            <button id="back-to-texts" class="hidden">← 返回篇目列表</button>
+            <span id="current-text-title">请选择一篇文言文</span>
+        </div>
+        
+        <!-- 内容区域 -->
+        <div class="texts-content">
+            <!-- 篇目选择区 -->
+            <div id="texts-list-view" class="content-view active">
                 <h4>上海高考必背篇目</h4>
                 <ul id="texts-list-ul">
                     <!-- 通过JavaScript动态填充 -->
                 </ul>
             </div>
             
-            <!-- 右侧段落选择区 -->
-            <div class="paragraphs-list">
+            <!-- 段落选择区 -->
+            <div id="paragraphs-list-view" class="content-view">
                 <h4>段落列表</h4>
                 <div id="paragraphs-container">
                     <p class="placeholder-text">请先选择一篇文言文</p>
@@ -88,7 +96,7 @@
         </div>
     </div>
     
-    <script src="classic_texts.js"></script>
+    <script src="classic_texts_final.js"></script>
     <script src="script.js"></script>
     
     <div class="instructions">
