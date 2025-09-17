@@ -402,7 +402,17 @@ function showParagraphs(text) {
         paragraphCard.className = 'paragraph-card';
         
         const paragraphTitle = document.createElement('h5');
-        paragraphTitle.textContent = `段落 ${index + 1}`;
+        // 为合并段落设置特殊标题
+        if (paragraph.id === 'para1-2') {
+            paragraphTitle.textContent = `段落 1-2`;
+        } else {
+            // 对于普通段落，根据id确定正确的段落编号
+            if (paragraph.id === 'para1' || paragraph.id === 'para2' || paragraph.id === 'para3' || paragraph.id === 'para4') {
+                paragraphTitle.textContent = `段落 ${paragraph.id.replace('para', '')}`;
+            } else {
+                paragraphTitle.textContent = `段落 ${index + 1}`;
+            }
+        }
         paragraphCard.appendChild(paragraphTitle);
         
         const paragraphContent = document.createElement('p');
