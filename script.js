@@ -491,6 +491,263 @@ function showParagraphs(text) {
 // 添加返回按钮的点击事件
 backToTextsBtn.addEventListener('click', backToTextsList);
 
+// 复习模式相关DOM元素
+const modeToggle = document.getElementById('mode-toggle');
+const recitationMode = document.getElementById('recitation-mode');
+const reviewMode = document.getElementById('review-mode');
+const generateReviewBtn = document.getElementById('generate-review');
+const reviewContent = document.getElementById('review-content');
+const reviewSentences = document.getElementById('review-sentences');
+let reviewQuestionsGenerated = false;
+
+// 模式切换功能
+function switchMode(isReviewMode) {
+    if (isReviewMode) {
+        recitationMode.classList.remove('active');
+        reviewMode.classList.add('active');
+        document.body.classList.add('review-mode-active');
+        // 首次切换到复习模式时自动生成复习题目
+        if (!reviewQuestionsGenerated) {
+            generateReviewQuestions();
+            reviewQuestionsGenerated = true;
+        }
+    } else {
+        reviewMode.classList.remove('active');
+        recitationMode.classList.add('active');
+        document.body.classList.remove('review-mode-active');
+    }
+}
+
+// 监听模式切换开关（input事件确保滑动/点击立即触发）
+modeToggle.addEventListener('input', function() {
+    switchMode(this.checked);
+});
+modeToggle.addEventListener('change', function() {
+    switchMode(this.checked);
+});
+
+// 从经典文言文数据库中随机选取五篇文章
+function getRandomTexts(count = 5) {
+    // 过滤掉学期分类项和空段落项
+    const validTexts = window.classicTexts.filter(text => 
+        text.category !== '学期' && 
+        text.paragraphs && 
+        text.paragraphs.length > 0 &&
+        text.paragraphs.some(p => p.content && p.content.trim().length > 0)
+    );
+    
+    // 随机打乱数组并选取前count个
+    const shuffled = [...validTexts].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+
+// 从文章中提取以句号结束的完整句子
+function extractSentencesFromText(text) {
+    const sentences = [];
+    
+    // 遍历所有段落
+    text.paragraphs.forEach(paragraph => {
+        if (paragraph.content) {
+            // 使用句号分割句子
+            const paragraphSentences = paragraph.content.split(/[。！？]/).filter(s => s.trim().length > 0);
+            
+            paragraphSentences.forEach(sentence => {
+                // 清理句子，去除多余空格
+                const cleanSentence = sentence.trim();
+                if (cleanSentence.length > 0) {
+                    sentences.push({
+                        text: cleanSentence + '。',
+                        source: text.title,
+                        author: text.author
+                    });
+                }
+            });
+        }
+    });
+    
+    return sentences;
+}
+
+// 从句子中随机选择一个以逗号结束的分句进行挖空
+function createBlankSentence(sentence) {
+    // 使用逗号分割分句
+    const clauses = sentence.text.split(/[，；]/).filter(c => c.trim().length > 0);
+    
+    if (clauses.length <= 1) {
+        // 如果只有一个分句，不进行挖空
+        return {
+            original: sentence.text,
+            blanked: sentence.text,
+            blankIndex: -1
+        };
+    }
+    
+    // 随机选择一个分句进行挖空（排除最后一个分句，因为后面是句号）
+    const randomIndex = Math.floor(Math.random() * (clauses.length - 1));
+    const selectedClause = clauses[randomIndex].trim();
+    
+    // 创建挖空后的句子
+    const blankedClause = '__________';
+    let blankedSentence = '';
+    let currentIndex = 0;
+    
+    // 重建句子，替换选中的分句
+    for (let i = 0; i < clauses.length; i++) {
+        if (i === randomIndex) {
+            blankedSentence += blankedClause;
+        } else {
+            blankedSentence += clauses[i].trim();
+        }
+        
+        // 添加分隔符
+        if (i < clauses.length - 1) {
+            blankedSentence += i === clauses.length - 2 ? '。' : '，';
+        }
+    }
+    
+    return {
+        original: sentence.text,
+        blanked: blankedSentence,
+        blankIndex: randomIndex,
+        blankText: selectedClause,
+        source: sentence.source,
+        author: sentence.author
+    };
+}
+
+// 生成复习题目
+function generateReviewQuestions() {
+    // 清空之前的题目
+    reviewSentences.innerHTML = '';
+    
+    // 随机选取五篇文章
+    const randomTexts = getRandomTexts(5);
+    
+    if (randomTexts.length === 0) {
+        reviewSentences.innerHTML = '<p class="error-message">无法获取文言文数据，请检查数据库文件。</p>';
+        return;
+    }
+    
+    const reviewQuestions = [];
+    
+    // 从每篇文章中提取句子并创建挖空题目
+    randomTexts.forEach(text => {
+        const sentences = extractSentencesFromText(text);
+        
+        if (sentences.length > 0) {
+            // 随机选择一个句子
+            const randomSentence = sentences[Math.floor(Math.random() * sentences.length)];
+            const blankedSentence = createBlankSentence(randomSentence);
+            
+            if (blankedSentence.blankIndex >= 0) {
+                reviewQuestions.push(blankedSentence);
+            }
+        }
+    });
+    
+    // 如果题目数量不足，尝试从其他文章中补充
+    if (reviewQuestions.length < 5) {
+        const allTexts = window.classicTexts.filter(text => 
+            text.category !== '学期' && 
+            text.paragraphs && 
+            text.paragraphs.length > 0
+        );
+        
+        for (let i = reviewQuestions.length; i < 5 && allTexts.length > 0; i++) {
+            const randomText = allTexts[Math.floor(Math.random() * allTexts.length)];
+            const sentences = extractSentencesFromText(randomText);
+            
+            if (sentences.length > 0) {
+                const randomSentence = sentences[Math.floor(Math.random() * sentences.length)];
+                const blankedSentence = createBlankSentence(randomSentence);
+                
+                if (blankedSentence.blankIndex >= 0 && !reviewQuestions.some(q => q.original === blankedSentence.original)) {
+                    reviewQuestions.push(blankedSentence);
+                }
+            }
+        }
+    }
+    
+    // 显示复习题目
+    if (reviewQuestions.length > 0) {
+        reviewQuestions.forEach((question, index) => {
+            const sentenceElement = document.createElement('div');
+            sentenceElement.className = 'review-sentence';
+            
+            // 创建序号
+            const numberElement = document.createElement('span');
+            numberElement.className = 'sentence-number';
+            numberElement.textContent = (index + 1).toString();
+            
+            // 创建句子内容
+            const contentElement = document.createElement('span');
+            contentElement.className = 'sentence-content';
+            
+            // 处理句子文本，将下划线转换为可点击的挖空元素
+            const processedContent = processSentenceForDisplay(question.blanked);
+            contentElement.innerHTML = processedContent;
+            
+            // 添加来源信息
+            const sourceElement = document.createElement('div');
+            sourceElement.className = 'sentence-source';
+            sourceElement.textContent = `—— ${question.source} ${question.author ? `· ${question.author}` : ''}`;
+            sourceElement.style.fontSize = '14px';
+            sourceElement.style.color = '#666';
+            sourceElement.style.marginTop = '10px';
+            sourceElement.style.fontStyle = 'italic';
+            
+            sentenceElement.appendChild(numberElement);
+            sentenceElement.appendChild(contentElement);
+            sentenceElement.appendChild(sourceElement);
+            
+            // 存储原始数据
+            sentenceElement.dataset.original = question.original;
+            sentenceElement.dataset.blankText = question.blankText;
+            
+            reviewSentences.appendChild(sentenceElement);
+        });
+        
+        // 显示复习内容区域
+        reviewContent.classList.remove('hidden');
+        
+        // 添加点击事件监听器
+        addBlankClickListeners();
+    } else {
+        reviewSentences.innerHTML = '<p class="error-message">无法生成足够的复习题目，请重试。</p>';
+    }
+}
+
+// 处理句子文本，将下划线转换为可点击的挖空元素
+function processSentenceForDisplay(sentence) {
+    return sentence.replace(/__________/g, '<span class="blank" data-blank="true">__________</span>');
+}
+
+// 添加挖空点击事件监听器
+function addBlankClickListeners() {
+    const blanks = document.querySelectorAll('.blank[data-blank="true"]');
+    
+    blanks.forEach(blank => {
+        blank.addEventListener('click', function() {
+            const sentenceElement = this.closest('.review-sentence');
+            const originalText = sentenceElement.dataset.original;
+            const blankText = sentenceElement.dataset.blankText;
+            
+            if (this.classList.contains('revealed')) {
+                // 恢复为挖空状态
+                this.textContent = '__________';
+                this.classList.remove('revealed');
+            } else {
+                // 显示原句内容
+                this.textContent = blankText;
+                this.classList.add('revealed');
+            }
+        });
+    });
+}
+
+// 监听生成复习题目按钮
+generateReviewBtn.addEventListener('click', generateReviewQuestions);
+
 // 页面加载完成后执行
 window.addEventListener('DOMContentLoaded', function() {
     // 自动加载示例文本，方便用户直接查看效果

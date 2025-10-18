@@ -8,7 +8,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>文言文背诵助手</h1>
+        <div class="mode-switch-container">
+            <div class="mode-switch">
+                <span class="mode-label">背诵模式</span>
+                <label class="switch">
+                    <input type="checkbox" id="mode-toggle">
+                    <span class="slider round"></span>
+                </label>
+                <span class="mode-label">复习模式</span>
+            </div>
+        </div>
+        <h1>你就背吧</h1>
+        
+        <!-- 背诵模式界面 -->
+        <div id="recitation-mode" class="mode-content active">
         
         <div class="input-section">
             <label for="input-text">输入文言文内容：</label>
@@ -16,48 +29,54 @@
         </div>
         
         <div class="control-section">
-            <button id="process-btn">处理文本</button>
-            
             <div class="settings">
-                <div class="setting-item">
-                    <label for="interval">间隔字数：</label>
-                    <input type="number" id="interval" min="1" value="3">
-                </div>
-                
-                <div class="setting-item">
-                    <label for="start">起始字数：</label>
-                    <input type="number" id="start" min="0" value="1">
-                </div>
-                
-                <div class="setting-item">
-                    <label for="random-ratio">随机挖空频率：</label>
-                    <input type="number" id="random-ratio" min="1" max="100" value="30">
-                    <span>%</span>
-                </div>
-                
+            <!-- 常规挖空组 -->
+            <div class="settings-group">
+                <h4>常规挖空</h4>
                 <div class="setting-item">
                     <label for="regular-mode">
                         <input type="checkbox" id="regular-mode" checked>
                         常规挖空
                     </label>
                 </div>
-                
+                <div class="setting-item">
+                    <label for="interval">间隔字数：</label>
+                    <input type="number" id="interval" min="1" value="3">
+                </div>
+                <div class="setting-item">
+                    <label for="start">起始字数：</label>
+                    <input type="number" id="start" min="0" value="1">
+                </div>
+            </div>
+            
+            <!-- 随机挖空组 -->
+            <div class="settings-group">
+                <h4>随机挖空</h4>
                 <div class="setting-item">
                     <label for="random-mode">
-                        <input type="checkbox" id="random-mode" checked>
+                        <input type="checkbox" id="random-mode">
                         随机挖空
                     </label>
                 </div>
-                
+                <div class="setting-item">
+                    <label for="random-ratio">随机挖空频率：</label>
+                    <input type="number" id="random-ratio" min="1" max="100" value="30">
+                    <span>%</span>
+                </div>
+            </div>
+            
+            <!-- 仅显示句首字组 -->
+            <div class="settings-group">
+                <h4>其他模式</h4>
                 <div class="setting-item">
                     <label for="first-char-mode">
                         <input type="checkbox" id="first-char-mode">
                         仅显示句首字
                     </label>
                 </div>
-                
-
             </div>
+        </div>
+            <button id="process-btn">处理文本</button>
         </div>
         
         <div class="output-section">
@@ -68,7 +87,6 @@
     
     <!-- 文言文预设内容选择区 -->
     <div class="classic-texts-section">
-        <h3>文言文预设内容</h3>
         
         <!-- 导航区域 -->
         <div class="texts-navigation">
@@ -94,13 +112,29 @@
                 </div>
             </div>
         </div>
+        </div>
+        
+        <!-- 复习模式界面 -->
+        <div id="review-mode" class="mode-content">
+            <div class="review-section">
+                <h2>复习模式</h2>
+
+                <button id="generate-review" class="generate-btn">生成复习题目</button>
+                
+                <div id="review-content" class="review-content hidden">
+
+                    <div id="review-sentences" class="review-sentences">
+                        <!-- 复习句子将在这里动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <script src="classic_texts_final.js"></script>
     <script src="script.js"></script>
     
     <div class="instructions">
-        <h3>使用说明</h3>
         <ol>
             <li>在输入框中粘贴需要处理的文言文内容</li>
             <li>设置间隔字数、起始字数和随机挖空频率</li>
@@ -111,7 +145,6 @@
     </div>
     
     <div class="footer">
-        <p style="text-align: center;">祝你早日背完兰亭集序 &nbsp;&nbsp;·&nbsp;&nbsp; <a href="https://intro-recitation-tool.pages.dev/" target="_blank">项目介绍</a></p>
     </div>
 </body>
 </html>

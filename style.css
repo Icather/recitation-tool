@@ -70,12 +70,16 @@ textarea:focus {
     background-color: #c9151e;
     color: white;
     border: none;
-    padding: 12px 24px;
+    width: 120px;
+    height: 120px;
     font-size: 16px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
-    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 #process-btn:hover {
@@ -88,8 +92,25 @@ textarea:focus {
 
 .settings {
     display: flex;
-    gap: 30px;
+    gap: 40px;
     flex-wrap: wrap;
+}
+
+.settings-group {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    min-width: 250px;
+}
+
+.settings-group h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #c9151e;
+    font-size: 16px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 8px;
 }
 
 .setting-item {
@@ -165,6 +186,201 @@ input[type="number"].disabled {
 
 .footer p {
     margin: 0;
+}
+
+/* 模式切换开关样式 */
+.mode-switch-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.mode-switch {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: #f9f9f9;
+    padding: 10px 20px;
+    border-radius: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mode-label {
+    font-weight: 500;
+    color: #666;
+    font-size: 14px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #c9151e;
+}
+
+input:checked + .slider:before {
+    transform: translateX(30px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* 模式内容样式 */
+.mode-content {
+    display: none;
+}
+
+.mode-content.active {
+    display: block;
+}
+
+/* 复习模式样式 */
+.review-section {
+    text-align: center;
+    padding: 30px 0;
+}
+
+.review-section h2 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.review-description {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+.generate-btn {
+    background-color: #c9151e;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.generate-btn:hover {
+    background-color: #b8131a;
+}
+
+.review-content {
+    margin-top: 40px;
+}
+
+.review-content h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.review-sentences {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.review-sentence {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    line-height: 1.8;
+}
+
+.sentence-number {
+    display: inline-block;
+    background-color: #c9151e;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    line-height: 30px;
+    text-align: center;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.blank {
+    display: inline-block;
+    background-color: #e0e0e0;
+    color: transparent;
+    padding: 2px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    margin: 0 2px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.blank:hover {
+    background-color: #d0d0d0;
+}
+
+.blank.revealed {
+    background-color: transparent;
+    color: #333;
+    text-decoration: underline;
+    text-decoration-color: #c9151e;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 复习模式下隐藏文言文预设内容和使用说明 */
+#review-mode.active ~ .classic-texts-section,
+#review-mode.active ~ .instructions,
+.review-mode-active .classic-texts-section,
+.review-mode-active .instructions {
+    display: none !important;
 }
 
 
@@ -403,16 +619,24 @@ input[type="number"].disabled {
     
     .control-section {
         flex-direction: column;
-        align-items: stretch;
+        align-items: center;
         gap: 15px;
     }
     
     #process-btn {
-        width: 100%;
+        width: 100px;
+        height: 100px;
+        font-size: 14px;
     }
     
     .settings {
-        justify-content: space-between;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .settings-group {
+        min-width: auto;
+        width: 100%;
     }
     
     .classic-texts-section {
