@@ -163,6 +163,13 @@ inputText.addEventListener('keydown', function(e) {
 function toggleControlElements() {
     const isFirstCharModeEnabled = firstCharModeCheckbox.checked;
     
+    // 找到控件对应的父级.setting-item，便于在移动端隐藏
+    const regularModeItem = regularModeCheckbox.closest('.setting-item');
+    const randomModeItem = randomModeCheckbox.closest('.setting-item');
+    const intervalItem = intervalInput.closest('.setting-item');
+    const startItem = startInput.closest('.setting-item');
+    const randomRatioItem = randomRatioInput.closest('.setting-item');
+    
     // 如果启用了仅显示句首字模式，则禁用其他所有挖空模式和相关设置
     if (isFirstCharModeEnabled) {
         regularModeCheckbox.disabled = true;
@@ -171,18 +178,29 @@ function toggleControlElements() {
         startInput.disabled = true;
         randomRatioInput.disabled = true;
         
-        // 添加禁用样式
+        // 添加禁用样式到输入控件
         regularModeCheckbox.classList.add('disabled');
         randomModeCheckbox.classList.add('disabled');
         intervalInput.classList.add('disabled');
         startInput.classList.add('disabled');
         randomRatioInput.classList.add('disabled');
+        
+        // 添加禁用样式到父级.setting-item，便于在移动端隐藏
+        if (regularModeItem) regularModeItem.classList.add('disabled');
+        if (randomModeItem) randomModeItem.classList.add('disabled');
+        if (intervalItem) intervalItem.classList.add('disabled');
+        if (startItem) startItem.classList.add('disabled');
+        if (randomRatioItem) randomRatioItem.classList.add('disabled');
     } else {
         // 启用其他模式开关
         regularModeCheckbox.disabled = false;
         randomModeCheckbox.disabled = false;
         regularModeCheckbox.classList.remove('disabled');
         randomModeCheckbox.classList.remove('disabled');
+        
+        // 恢复父级.setting-item的禁用样式
+        if (regularModeItem) regularModeItem.classList.remove('disabled');
+        if (randomModeItem) randomModeItem.classList.remove('disabled');
         
         const isRegularModeEnabled = regularModeCheckbox.checked;
         const isRandomModeEnabled = randomModeCheckbox.checked;
@@ -194,10 +212,15 @@ function toggleControlElements() {
         // 根据随机挖空模式开关控制随机挖空频率输入框
         randomRatioInput.disabled = !isRandomModeEnabled;
         
-        // 添加/移除禁用样式
+        // 添加/移除禁用样式（输入控件）
         intervalInput.classList.toggle('disabled', !isRegularModeEnabled);
         startInput.classList.toggle('disabled', !isRegularModeEnabled);
         randomRatioInput.classList.toggle('disabled', !isRandomModeEnabled);
+        
+        // 添加/移除禁用样式（父级.setting-item）
+        if (intervalItem) intervalItem.classList.toggle('disabled', !isRegularModeEnabled);
+        if (startItem) startItem.classList.toggle('disabled', !isRegularModeEnabled);
+        if (randomRatioItem) randomRatioItem.classList.toggle('disabled', !isRandomModeEnabled);
     }
 }
 
@@ -746,10 +769,28 @@ function addBlankClickListeners() {
 }
 
 // 监听生成复习题目按钮
+// 设备类型检测（按屏幕尺寸）
+function detectDeviceByScreenSize() {
+    const width = window.screen.width;
+    const height = window.screen.height;
+    if (width <= 767 || height <= 767) {
+        return 'Mobile';
+    } else if (width > 767 && width <= 1024) {
+        return 'Tablet';
+    } else {
+        return 'Desktop';
+    }
+}
+console.log(detectDeviceByScreenSize());
+
 generateReviewBtn.addEventListener('click', generateReviewQuestions);
 
 // 页面加载完成后执行
 window.addEventListener('DOMContentLoaded', function() {
+    const deviceType = detectDeviceByScreenSize();
+    window.deviceType = deviceType;
+    document.body.dataset.device = deviceType;
+    document.body.classList.add('device-' + deviceType.toLowerCase());
     // 自动加载示例文本，方便用户直接查看效果
     loadSampleText();
     
