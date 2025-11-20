@@ -1,4 +1,59 @@
-/* 全局样式 */
+/* ==========================================================================
+   Design System & Variables (Matched with style.css)
+   ========================================================================== */
+:root {
+    /* Color Palette - Premium Dark Glassmorphism */
+    --primary-hue: 220;
+    --primary-sat: 90%;
+    --primary-light: 60%;
+
+    --color-bg-base: #0f172a;
+    --color-bg-gradient-start: #0f172a;
+    --color-bg-gradient-end: #1e293b;
+
+    --color-primary: hsl(var(--primary-hue), var(--primary-sat), var(--primary-light));
+    --color-primary-hover: hsl(var(--primary-hue), var(--primary-sat), 70%);
+    --color-secondary: #ec4899;
+    /* Pink accent */
+    --color-accent: #8b5cf6;
+    /* Purple accent */
+
+    --color-text-main: #f8fafc;
+    --color-text-muted: #94a3b8;
+    --color-text-inverse: #0f172a;
+
+    /* Glassmorphism */
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --glass-blur: 12px;
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-xxl: 3rem;
+
+    /* Typography */
+    --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    /* Radius */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-full: 9999px;
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* ==========================================================================
+   Reset & Base Styles
+   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
@@ -6,10 +61,14 @@
 }
 
 body {
-    font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-main);
+    background-color: var(--color-bg-base);
+    background-image:
+        radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 85% 30%, rgba(14, 165, 233, 0.15) 0%, transparent 50%);
+    background-attachment: fixed;
+    color: var(--color-text-main);
     line-height: 1.6;
-    color: #333;
-    background-color: #f8f9fa;
     overflow-x: hidden;
 }
 
@@ -17,106 +76,120 @@ body {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 var(--spacing-lg);
 }
 
-/* 头部区域 */
+/* ==========================================================================
+   Hero Section
+   ========================================================================== */
 .hero-section {
     display: flex;
     align-items: center;
     justify-content: space-between;
     min-height: 90vh;
-    padding: 40px 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    padding: 80px 0;
     position: relative;
     overflow: hidden;
-}
-
-.hero-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.05)" fill-opacity="1" d="M0,192L48,186.7C96,181,192,171,288,149.3C384,128,480,96,576,106.7C672,117,768,171,864,186.7C960,203,1056,181,1152,160C1248,139,1344,117,1392,106.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
-    background-size: cover;
-    background-position: center;
-    opacity: 0.3;
 }
 
 .hero-content {
     position: relative;
     z-index: 2;
     max-width: 600px;
-    padding: 40px;
+    padding: var(--spacing-xl);
 }
 
 .hero-content h1 {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    line-height: 1.2;
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: var(--spacing-md);
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--color-text-main) 0%, var(--color-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
 }
 
 .hero-content p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-    opacity: 0.9;
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-xl);
+    color: var(--color-text-muted);
+    font-weight: 300;
 }
 
 .hero-buttons {
     display: flex;
-    gap: 20px;
+    gap: var(--spacing-md);
 }
 
 .btn-primary {
     display: inline-block;
-    background-color: white;
-    color: #667eea;
-    padding: 12px 24px;
-    border-radius: 50px;
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-full);
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    transition: all var(--transition-fast);
+    box-shadow: 0 4px 15px rgba(var(--primary-hue), 90%, 60%, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 25px rgba(var(--primary-hue), 90%, 60%, 0.4);
+    background: var(--color-primary-hover);
 }
 
 .btn-primary.large {
-    padding: 16px 32px;
-    font-size: 1.1rem;
+    padding: 18px 40px;
+    font-size: 1.2rem;
 }
 
 .btn-secondary {
     display: inline-block;
-    background-color: transparent;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-text-main);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-full);
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.3s ease;
-    border: 2px solid white;
+    transition: all var(--transition-fast);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
 }
 
 .btn-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
+    border-color: var(--color-primary);
 }
 
 .hero-illustration {
     position: relative;
     z-index: 2;
-    padding: 40px;
+    padding: var(--spacing-xl);
+    animation: float 6s ease-in-out infinite;
 }
 
-/* 通用章节样式 */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* ==========================================================================
+   Common Section Styles
+   ========================================================================== */
 section {
     padding: 100px 0;
     position: relative;
@@ -124,36 +197,38 @@ section {
 
 .section-header {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 80px;
 }
 
 .section-header h2 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 15px;
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-md);
     position: relative;
     display: inline-block;
 }
 
 .section-header p {
-    font-size: 1.1rem;
-    color: #7f8c8d;
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
     max-width: 700px;
     margin: 0 auto;
 }
 
 .divider {
-    width: 100px;
+    width: 80px;
     height: 4px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    margin: 15px auto 30px;
-    border-radius: 2px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+    margin: var(--spacing-md) auto;
+    border-radius: var(--radius-full);
 }
 
-/* 项目概述区域 */
+/* ==========================================================================
+   Overview Section
+   ========================================================================== */
 .overview-section {
-    background-color: white;
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .overview-content {
@@ -165,8 +240,9 @@ section {
 .overview-content p {
     font-size: 1.2rem;
     line-height: 1.8;
-    color: #555;
-    margin-bottom: 50px;
+    color: var(--color-text-main);
+    margin-bottom: 60px;
+    opacity: 0.9;
 }
 
 .stats-container {
@@ -179,32 +255,39 @@ section {
 .stat-item {
     text-align: center;
     padding: 30px;
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    transition: all 0.3s ease;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(var(--glass-blur));
+    transition: all var(--transition-normal);
     min-width: 200px;
 }
 
 .stat-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-color: var(--color-primary);
 }
 
 .stat-number {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #667eea;
-    margin-bottom: 10px;
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--color-text-main) 0%, var(--color-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: var(--spacing-sm);
 }
 
 .stat-label {
     font-size: 1.1rem;
-    color: #555;
+    color: var(--color-text-muted);
 }
 
-/* 核心功能区域 */
+/* ==========================================================================
+   Features Section
+   ========================================================================== */
 .features-section {
-    background-color: #f8f9fa;
+    position: relative;
 }
 
 .features-grid {
@@ -214,17 +297,19 @@ section {
 }
 
 .feature-card {
-    background-color: white;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     padding: 40px;
-    border-radius: 10px;
+    border-radius: var(--radius-lg);
     text-align: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all var(--transition-normal);
+    backdrop-filter: blur(var(--glass-blur));
 }
 
 .feature-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border-color: var(--color-primary);
 }
 
 .feature-icon {
@@ -232,37 +317,41 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     margin: 0 auto 20px;
-    background-color: #f8f9fa;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 50%;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
 }
 
 .feature-card:hover .feature-icon {
-    background-color: #667eea;
+    background: var(--color-primary);
+    transform: scale(1.1);
 }
 
-.feature-card:hover .feature-icon svg path {
-    stroke: white;
+.feature-card:hover .feature-icon svg path,
+.feature-card:hover .feature-icon svg circle {
+    stroke: var(--color-text-inverse);
 }
 
 .feature-card h3 {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 15px;
-    color: #2c3e50;
+    color: var(--color-text-main);
 }
 
 .feature-card p {
-    color: #7f8c8d;
+    color: var(--color-text-muted);
     line-height: 1.6;
 }
 
-/* 科学原理区域 */
+/* ==========================================================================
+   Science Section
+   ========================================================================== */
 .science-section {
-    background-color: white;
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .science-content {
@@ -274,23 +363,24 @@ section {
 .science-item {
     display: flex;
     align-items: center;
-    gap: 40px;
-}
-
-.science-item.reverse {
-    flex-direction: row-reverse;
+    gap: 60px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(var(--glass-blur));
 }
 
 .science-icon {
     flex-shrink: 0;
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 50%;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .science-text {
@@ -301,18 +391,20 @@ section {
     font-size: 1.8rem;
     font-weight: 600;
     margin-bottom: 15px;
-    color: #2c3e50;
+    color: var(--color-text-main);
 }
 
 .science-text p {
     font-size: 1.1rem;
     line-height: 1.7;
-    color: #555;
+    color: var(--color-text-muted);
 }
 
-/* 使用指南区域 */
+/* ==========================================================================
+   Usage Section
+   ========================================================================== */
 .usage-section {
-    background-color: #f8f9fa;
+    position: relative;
 }
 
 .usage-steps {
@@ -327,96 +419,53 @@ section {
     display: flex;
     gap: 30px;
     align-items: flex-start;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 30px;
+    border-radius: var(--radius-lg);
+    transition: transform var(--transition-fast);
+}
+
+.step-item:hover {
+    transform: translateX(10px);
+    border-color: var(--color-primary);
 }
 
 .step-number {
     flex-shrink: 0;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 700;
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 5px 15px rgba(var(--primary-hue), 90%, 60%, 0.3);
 }
 
 .step-content h3 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 600;
     margin-bottom: 10px;
-    color: #2c3e50;
+    color: var(--color-text-main);
 }
 
 .step-content p {
     font-size: 1.1rem;
-    color: #555;
+    color: var(--color-text-muted);
     line-height: 1.6;
 }
 
-/* 用户反馈区域 */
-.testimonial-section {
-    background-color: white;
-}
-
-.testimonials-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-}
-
-.testimonial-card {
-    background-color: #f8f9fa;
-    padding: 40px;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-}
-
-.testimonial-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-}
-
-.testimonial-content p {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #555;
-    margin-bottom: 20px;
-    position: relative;
-    padding-left: 20px;
-}
-
-.testimonial-content p::before {
-    content: '"';
-    font-size: 3rem;
-    position: absolute;
-    left: -10px;
-    top: -20px;
-    color: #667eea;
-    opacity: 0.2;
-}
-
-.author-name {
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 5px;
-}
-
-.author-info {
-    font-size: 0.9rem;
-    color: #7f8c8d;
-}
-
-/* 行动召唤区域 */
+/* ==========================================================================
+   CTA Section
+   ========================================================================== */
 .cta-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 80px 0;
+    padding: 100px 0;
     text-align: center;
+    background: linear-gradient(180deg, transparent 0%, rgba(var(--primary-hue), 90%, 60%, 0.1) 100%);
 }
 
 .cta-content {
@@ -425,21 +474,24 @@ section {
 }
 
 .cta-content h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-size: 3rem;
+    font-weight: 800;
     margin-bottom: 20px;
+    color: var(--color-text-main);
 }
 
 .cta-content p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-    opacity: 0.9;
+    font-size: 1.3rem;
+    margin-bottom: 40px;
+    color: var(--color-text-muted);
 }
 
-/* 页脚区域 */
+/* ==========================================================================
+   Footer
+   ========================================================================== */
 .footer-section {
-    background-color: #2c3e50;
-    color: white;
+    background: rgba(0, 0, 0, 0.4);
+    border-top: 1px solid var(--glass-border);
     padding: 60px 0;
 }
 
@@ -453,53 +505,54 @@ section {
 .footer-logo h3 {
     font-size: 1.5rem;
     margin-bottom: 10px;
+    color: var(--color-text-main);
 }
 
 .footer-logo p {
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--color-text-muted);
     margin-bottom: 30px;
 }
 
 .footer-links {
     display: flex;
-    gap: 20px;
+    gap: 30px;
     margin-bottom: 30px;
 }
 
 .footer-links a {
-    color: white;
+    color: var(--color-text-muted);
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color var(--transition-fast);
 }
 
 .footer-links a:hover {
-    color: #667eea;
+    color: var(--color-primary);
 }
 
 .footer-license p {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.3);
     font-size: 0.9rem;
     line-height: 1.6;
 }
 
-/* 响应式设计 */
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
 @media (max-width: 992px) {
     .hero-section {
         flex-direction: column;
         text-align: center;
+        padding-top: 120px;
     }
-    
+
     .hero-buttons {
         justify-content: center;
     }
-    
-    .hero-content, .hero-illustration {
-        padding: 20px;
-    }
-    
-    .science-item, .science-item.reverse {
+
+    .science-item {
         flex-direction: column;
         text-align: center;
+        gap: 30px;
     }
 }
 
@@ -507,21 +560,21 @@ section {
     .hero-content h1 {
         font-size: 2.5rem;
     }
-    
+
     .section-header h2 {
         font-size: 2rem;
     }
-    
+
     section {
         padding: 60px 0;
     }
-    
+
     .step-item {
         flex-direction: column;
         text-align: center;
         gap: 20px;
     }
-    
+
     .step-number {
         margin: 0 auto;
     }
@@ -531,20 +584,12 @@ section {
     .hero-content h1 {
         font-size: 2rem;
     }
-    
+
     .hero-buttons {
         flex-direction: column;
     }
-    
-    .section-header h2 {
-        font-size: 1.8rem;
-    }
-    
+
     .features-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .testimonials-grid {
         grid-template-columns: 1fr;
     }
 }

@@ -1,5 +1,6 @@
 // 经典文言文背诵篇目数据
-window.classicTexts = [
+window.RecitationData = window.RecitationData || {};
+window.RecitationData.texts = [
     // 高一上学期
     {
         id: 'gaoyi-1',
@@ -522,5 +523,5 @@ window.classicTexts = [
 
 // Node.js 环境支持
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = window.classicTexts;
+    module.exports = window.RecitationData.texts;
 }
