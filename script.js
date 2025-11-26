@@ -18,8 +18,11 @@
 
         // 工具栏控件
         intervalInput: document.getElementById('interval'),
+        intervalSlider: document.getElementById('interval-slider'),
         startInput: document.getElementById('start'),
+        startSlider: document.getElementById('start-slider'),
         randomRatioInput: document.getElementById('random-ratio'),
+        randomRatioSlider: document.getElementById('random-ratio-slider'),
         regularModeCheckbox: document.getElementById('regular-mode'),
         randomModeCheckbox: document.getElementById('random-mode'),
         firstCharModeCheckbox: document.getElementById('first-char-mode'),
@@ -289,12 +292,87 @@
         if (DOM.reciteLayer.classList.contains('active')) processText();
     });
 
-    // 监听输入框数值变化，实时更新
-    [DOM.intervalInput, DOM.startInput, DOM.randomRatioInput].forEach(input => {
-        input.addEventListener('change', () => {
+    // ==========================================================================
+    // 滑动条与输入框双向联动逻辑
+    // ==========================================================================
+    
+    // 初始化：将输入框值同步到滑动条
+    function initSliders() {
+        DOM.intervalSlider.value = DOM.intervalInput.value;
+        DOM.startSlider.value = DOM.startInput.value;
+        DOM.randomRatioSlider.value = DOM.randomRatioInput.value;
+    }
+    
+    // 滑动条 → 输入框联动
+    function setupSliderListeners() {
+        // 间隔滑动条
+        DOM.intervalSlider.addEventListener('input', function() {
+            DOM.intervalInput.value = this.value;
             if (DOM.reciteLayer.classList.contains('active')) processText();
         });
-    });
+        
+        // 起始滑动条
+        DOM.startSlider.addEventListener('input', function() {
+            DOM.startInput.value = this.value;
+            if (DOM.reciteLayer.classList.contains('active')) processText();
+        });
+        
+        // 随机频率滑动条
+        DOM.randomRatioSlider.addEventListener('input', function() {
+            DOM.randomRatioInput.value = this.value;
+            if (DOM.reciteLayer.classList.contains('active')) processText();
+        });
+    }
+    
+    // 输入框 → 滑动条联动
+    function setupInputListeners() {
+        // 间隔输入框
+        DOM.intervalInput.addEventListener('change', function() {
+            // 验证范围
+            let value = parseInt(this.value);
+            if (isNaN(value) || value < 1) {
+                value = CONFIG.DEFAULT_INTERVAL;
+                this.value = value;
+            }
+            DOM.intervalSlider.value = value;
+        });
+        
+        // 起始输入框
+        DOM.startInput.addEventListener('change', function() {
+            // 验证范围
+            let value = parseInt(this.value);
+            if (isNaN(value) || value < 0) {
+                value = CONFIG.DEFAULT_START;
+                this.value = value;
+            }
+            DOM.startSlider.value = value;
+        });
+        
+        // 随机频率输入框
+        DOM.randomRatioInput.addEventListener('change', function() {
+            // 验证范围
+            let value = parseInt(this.value);
+            if (isNaN(value) || value < CONFIG.MIN_RANDOM_RATIO || value > CONFIG.MAX_RANDOM_RATIO) {
+                value = CONFIG.DEFAULT_RANDOM_RATIO;
+                this.value = value;
+            }
+            DOM.randomRatioSlider.value = value;
+        });
+        
+        // 实时更新处理
+        [DOM.intervalInput, DOM.startInput, DOM.randomRatioInput].forEach(input => {
+            input.addEventListener('change', () => {
+                if (DOM.reciteLayer.classList.contains('active')) processText();
+            });
+        });
+    }
+    
+    // 设置所有联动监听器
+    function setupSliderInputSync() {
+        initSliders();
+        setupSliderListeners();
+        setupInputListeners();
+    }
 
     // ==========================================================================
     // 侧边栏与篇目列表逻辑
@@ -305,11 +383,10 @@
     }
 
     function initSemesterSelector() {
-        const textsListHeader = DOM.textsListView.querySelector('.sidebar-header'); // Modified selector
-        // 如果找不到header，或者已经添加了，就跳过
-        if (!textsListHeader || document.getElementById('semester-selector')) return;
+        // 如果已经添加了选择器，就跳过
+        if (document.getElementById('semester-selector')) return;
 
-        // 实际上我们应该把selector放在list-view内部的顶部
+        // 直接使用DOM.textsListView作为容器
         const container = DOM.textsListView;
 
         semesterSelector.innerHTML = '<option value="all">全部册次</option>';
@@ -360,7 +437,15 @@
 
                     const authorDiv = document.createElement('div');
                     authorDiv.className = 'text-author';
-                    authorDiv.textContent = text.author || '未知';
+                    const hasDynasty = !!text.dynasty;
+                    const hasAuthor = !!text.author;
+                    if (hasDynasty && hasAuthor) {
+                        authorDiv.textContent = `${text.dynasty} · ${text.author}`;
+                    } else if (hasDynasty) {
+                        authorDiv.textContent = text.dynasty;
+                    } else {
+                        authorDiv.textContent = text.author || '未知';
+                    }
 
                     li.appendChild(titleDiv);
                     li.appendChild(authorDiv);
@@ -487,7 +572,8 @@
                         sentences.push({
                             text: cleanSentence + '。',
                             source: text.title,
-                            author: text.author
+                            author: text.author,
+                            dynasty: text.dynasty
                         });
                     }
                 });
@@ -522,7 +608,8 @@
             blankIndex: randomIndex,
             blankText: selectedClause,
             source: sentence.source,
-            author: sentence.author
+            author: sentence.author,
+            dynasty: sentence.dynasty
         };
     }
 
@@ -564,16 +651,48 @@
             source.style.color = '#666';
             source.style.fontSize = '0.9rem';
 
-            // 构建来源文本
-            source.innerHTML = `—— ${question.source}`;
-            if (question.author) {
-                source.innerHTML += ' · ';
-                if (DOM.blankAuthorModeCheckbox.checked) {
-                    source.innerHTML += `<span class="blank" data-blank="true" data-text="${question.author}">__________</span>`;
-                } else {
-                    source.innerHTML += question.author;
+            // 构建来源文本，支持联动隐藏作者和朝代
+            let sourceText = '';
+            
+            // 显示标题
+            if (question.source) {
+                sourceText += question.source;
+            }
+            
+            // 显示朝代和作者，实现联动隐藏
+            const hasDynasty = !!question.dynasty;
+            const hasAuthor = !!question.author;
+            
+            if (hasDynasty || hasAuthor) {
+                sourceText += ' · ';
+                
+                // 联动隐藏逻辑：如果勾选了隐藏作者/朝代/篇名，则同时隐藏朝代和作者
+                const hideAuthorDynasty = DOM.blankAuthorModeCheckbox.checked;
+                
+                // 显示朝代（在作者左侧）
+                if (hasDynasty) {
+                    if (hideAuthorDynasty) {
+                        sourceText += `<span class="blank" data-blank="true" data-text="${question.dynasty}">__________</span>`;
+                    } else {
+                        sourceText += question.dynasty;
+                    }
+                    
+                    if (hasAuthor) {
+                        sourceText += ' · ';
+                    }
+                }
+                
+                // 显示作者
+                if (hasAuthor) {
+                    if (hideAuthorDynasty) {
+                        sourceText += `<span class="blank" data-blank="true" data-text="${question.author}">__________</span>`;
+                    } else {
+                        sourceText += question.author;
+                    }
                 }
             }
+            
+            source.innerHTML = `—— ${sourceText}`;
 
             el.appendChild(num);
             el.appendChild(content);
@@ -624,6 +743,9 @@
         toggleControlElements();
         initSemesterSelector();
         initTextsList();
+        
+        // 设置滑动条与输入框的双向联动
+        setupSliderInputSync();
 
         // 默认进入编辑模式
         switchToEditView();

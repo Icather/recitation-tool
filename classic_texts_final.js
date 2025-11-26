@@ -13,6 +13,8 @@ window.RecitationData.texts = [
         id: 'qinyuanchun-changsha',
         title: '沁园春·长沙',
         author: '毛泽东',
+        dynasty: '现代',
+        source: '《毛泽东诗词选》',
         category: '（一）必修上册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -30,6 +32,8 @@ window.RecitationData.texts = [
         id: 'duangexing',
         title: '短歌行',
         author: '曹操',
+        dynasty: '东汉',
+        source: '《曹操集》',
         category: '（一）必修上册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -55,6 +59,8 @@ window.RecitationData.texts = [
         id: 'mengyoutianmu',
         title: '梦游天姥吟留别',
         author: '李白',
+        dynasty: '唐代',
+        source: '《李太白全集》',
         category: '（一）必修上册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -76,6 +82,8 @@ window.RecitationData.texts = [
         id: 'denggao',
         title: '登高',
         author: '杜甫',
+        dynasty: '唐代',
+        source: '《杜工部集》',
         category: '（一）必修上册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -89,6 +97,8 @@ window.RecitationData.texts = [
         id: 'niannujiao-chibihuaihu',
         title: '念奴娇·赤壁怀古',
         author: '苏轼',
+        dynasty: '北宋',
+        source: '《东坡乐府笺》',
         category: '（一）必修上册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -106,6 +116,8 @@ window.RecitationData.texts = [
         id: 'quanxue',
         title: '劝学',
         author: '荀子',
+        dynasty: '战国',
+        source: '《荀子》',
         category: '（一）必修上册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -131,6 +143,8 @@ window.RecitationData.texts = [
         id: 'shishuo',
         title: '师说（第一段）',
         author: '韩愈',
+        dynasty: '唐代',
+        source: '《昌黎先生集》',
         category: '（一）必修上册-古诗文精读',
         description: '背诵第一段',
         paragraphs: [
@@ -144,6 +158,8 @@ window.RecitationData.texts = [
         id: 'chibifu',
         title: '赤壁赋',
         author: '苏轼',
+        dynasty: '北宋',
+        source: '《东坡全集》',
         category: '（一）必修上册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -181,6 +197,8 @@ window.RecitationData.texts = [
         id: 'ziluzengxi',
         title: '子路、曾皙、冉有、公西华侍坐',
         author: '《论语》',
+        dynasty: '春秋',
+        source: '《论语·先进》',
         category: '（二）必修下册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -214,6 +232,8 @@ window.RecitationData.texts = [
         id: 'afanggongfu',
         title: '阿房宫赋',
         author: '杜牧',
+        dynasty: '唐代',
+        source: '《樊川文集》',
         category: '（二）必修下册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -239,6 +259,8 @@ window.RecitationData.texts = [
         id: 'liuguolun',
         title: '六国论',
         author: '苏洵',
+        dynasty: '北宋',
+        source: '《嘉祐集笺注》',
         category: '（二）必修下册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -276,6 +298,8 @@ window.RecitationData.texts = [
         id: 'lunyu-shierzhang',
         title: '《论语》十二章',
         author: '孔子弟子及再传弟子',
+        dynasty: '春秋',
+        source: '《论语》',
         category: '（三）选择性必修上册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -333,6 +357,8 @@ window.RecitationData.texts = [
         id: 'daxuezhidao',
         title: '大学之道',
         author: '《礼记》',
+        dynasty: '战国至秦汉',
+        source: '《礼记·大学》',
         category: '（三）选择性必修上册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -354,6 +380,8 @@ window.RecitationData.texts = [
         id: 'laozisizhang',
         title: '《老子》四章',
         author: '老子',
+        dynasty: '春秋',
+        source: '《老子》',
         category: '（三）选择性必修上册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -387,6 +415,8 @@ window.RecitationData.texts = [
         id: 'quyuanliezhuan',
         title: '屈原列传',
         author: '司马迁',
+        dynasty: '西汉',
+        source: '《史记·屈原贾生列传》',
         category: '（四）选择性必修中册-古诗文精读',
         description: '背诵"屈平疾王听之不聪也……虽与日月争光可也"部分',
         paragraphs: [
@@ -400,6 +430,8 @@ window.RecitationData.texts = [
         id: 'guoqinlun',
         title: '过秦论（上）',
         author: '贾谊',
+        dynasty: '西汉',
+        source: '《新书》',
         category: '（四）选择性必修中册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -437,6 +469,8 @@ window.RecitationData.texts = [
         id: 'lisao',
         title: '离骚（节选）',
         author: '屈原',
+        dynasty: '战国',
+        source: '《楚辞》',
         category: '（五）选择性必修下册-古诗文精读',
         description: '背诵"长太息以掩涕兮……岂余心之可惩"部分',
         paragraphs: [
@@ -454,6 +488,8 @@ window.RecitationData.texts = [
         id: 'shudaonan',
         title: '蜀道难',
         author: '李白',
+        dynasty: '唐代',
+        source: '《李太白全集》',
         category: '（五）选择性必修下册-古诗文诵读',
         description: '全文背诵',
         paragraphs: [
@@ -475,6 +511,8 @@ window.RecitationData.texts = [
         id: 'shuxiang',
         title: '蜀相',
         author: '杜甫',
+        dynasty: '唐代',
+        source: '《杜工部集》',
         category: '（五）选择性必修下册-古诗文诵读',
         description: '全文背诵',
         paragraphs: [
@@ -488,6 +526,8 @@ window.RecitationData.texts = [
         id: 'chenqingbiao',
         title: '陈情表',
         author: '李密',
+        dynasty: '西晋',
+        source: '《文选》',
         category: '（五）选择性必修下册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
@@ -513,6 +553,8 @@ window.RecitationData.texts = [
         id: 'lantingjixu',
         title: '兰亭集序',
         author: '王羲之',
+        dynasty: '东晋',
+        source: '《晋书·王羲之传》',
         category: '（五）选择性必修下册-古诗文精读',
         description: '全文背诵',
         paragraphs: [
