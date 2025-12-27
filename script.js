@@ -295,39 +295,39 @@
     // ==========================================================================
     // 滑动条与输入框双向联动逻辑
     // ==========================================================================
-    
+
     // 初始化：将输入框值同步到滑动条
     function initSliders() {
         DOM.intervalSlider.value = DOM.intervalInput.value;
         DOM.startSlider.value = DOM.startInput.value;
         DOM.randomRatioSlider.value = DOM.randomRatioInput.value;
     }
-    
+
     // 滑动条 → 输入框联动
     function setupSliderListeners() {
         // 间隔滑动条
-        DOM.intervalSlider.addEventListener('input', function() {
+        DOM.intervalSlider.addEventListener('input', function () {
             DOM.intervalInput.value = this.value;
             if (DOM.reciteLayer.classList.contains('active')) processText();
         });
-        
+
         // 起始滑动条
-        DOM.startSlider.addEventListener('input', function() {
+        DOM.startSlider.addEventListener('input', function () {
             DOM.startInput.value = this.value;
             if (DOM.reciteLayer.classList.contains('active')) processText();
         });
-        
+
         // 随机频率滑动条
-        DOM.randomRatioSlider.addEventListener('input', function() {
+        DOM.randomRatioSlider.addEventListener('input', function () {
             DOM.randomRatioInput.value = this.value;
             if (DOM.reciteLayer.classList.contains('active')) processText();
         });
     }
-    
+
     // 输入框 → 滑动条联动
     function setupInputListeners() {
         // 间隔输入框
-        DOM.intervalInput.addEventListener('change', function() {
+        DOM.intervalInput.addEventListener('change', function () {
             // 验证范围
             let value = parseInt(this.value);
             if (isNaN(value) || value < 1) {
@@ -336,9 +336,9 @@
             }
             DOM.intervalSlider.value = value;
         });
-        
+
         // 起始输入框
-        DOM.startInput.addEventListener('change', function() {
+        DOM.startInput.addEventListener('change', function () {
             // 验证范围
             let value = parseInt(this.value);
             if (isNaN(value) || value < 0) {
@@ -347,9 +347,9 @@
             }
             DOM.startSlider.value = value;
         });
-        
+
         // 随机频率输入框
-        DOM.randomRatioInput.addEventListener('change', function() {
+        DOM.randomRatioInput.addEventListener('change', function () {
             // 验证范围
             let value = parseInt(this.value);
             if (isNaN(value) || value < CONFIG.MIN_RANDOM_RATIO || value > CONFIG.MAX_RANDOM_RATIO) {
@@ -358,7 +358,7 @@
             }
             DOM.randomRatioSlider.value = value;
         });
-        
+
         // 实时更新处理
         [DOM.intervalInput, DOM.startInput, DOM.randomRatioInput].forEach(input => {
             input.addEventListener('change', () => {
@@ -366,7 +366,7 @@
             });
         });
     }
-    
+
     // 设置所有联动监听器
     function setupSliderInputSync() {
         initSliders();
@@ -526,19 +526,27 @@
     // ==========================================================================
     // 模式切换 (背诵 vs 复习)
     // ==========================================================================
-    function switchAppMode(isReviewMode) {
-        if (isReviewMode) {
+    function switchAppMode(isChecked) {
+        // Toggle Checked: Right side = Recitation Mode
+        // Toggle Unchecked: Left side = Review Mode (Default)
+
+        const isRecitationMode = isChecked;
+
+        if (isRecitationMode) {
+            // Switch to Recitation Mode
+            DOM.reviewMode.classList.remove('active');
+            DOM.recitationMode.classList.add('active');
+            document.body.classList.remove('review-mode-active');
+        } else {
+            // Switch to Review Mode
             DOM.recitationMode.classList.remove('active');
             DOM.reviewMode.classList.add('active');
             document.body.classList.add('review-mode-active');
+
             if (!reviewQuestionsGenerated) {
                 generateReviewQuestions();
                 reviewQuestionsGenerated = true;
             }
-        } else {
-            DOM.reviewMode.classList.remove('active');
-            DOM.recitationMode.classList.add('active');
-            document.body.classList.remove('review-mode-active');
         }
     }
 
@@ -653,22 +661,22 @@
 
             // 构建来源文本，支持联动隐藏作者和朝代
             let sourceText = '';
-            
+
             // 显示标题
             if (question.source) {
                 sourceText += question.source;
             }
-            
+
             // 显示朝代和作者，实现联动隐藏
             const hasDynasty = !!question.dynasty;
             const hasAuthor = !!question.author;
-            
+
             if (hasDynasty || hasAuthor) {
                 sourceText += ' · ';
-                
+
                 // 联动隐藏逻辑：如果勾选了隐藏作者/朝代/篇名，则同时隐藏朝代和作者
                 const hideAuthorDynasty = DOM.blankAuthorModeCheckbox.checked;
-                
+
                 // 显示朝代（在作者左侧）
                 if (hasDynasty) {
                     if (hideAuthorDynasty) {
@@ -676,12 +684,12 @@
                     } else {
                         sourceText += question.dynasty;
                     }
-                    
+
                     if (hasAuthor) {
                         sourceText += ' · ';
                     }
                 }
-                
+
                 // 显示作者
                 if (hasAuthor) {
                     if (hideAuthorDynasty) {
@@ -691,7 +699,7 @@
                     }
                 }
             }
-            
+
             source.innerHTML = `—— ${sourceText}`;
 
             el.appendChild(num);
@@ -743,12 +751,15 @@
         toggleControlElements();
         initSemesterSelector();
         initTextsList();
-        
+
         // 设置滑动条与输入框的双向联动
         setupSliderInputSync();
 
         // 默认进入编辑模式
         switchToEditView();
+
+        // Ensure the correct mode is active based on the default toggle state (Unchecked = Review Mode)
+        switchAppMode(DOM.modeToggle.checked);
     });
 
 })();

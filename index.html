@@ -17,12 +17,12 @@
             </div>
             <div class="mode-switch-container">
                 <div class="mode-switch">
-                    <span class="mode-label">背诵模式</span>
+                    <span class="mode-label">复习模式</span>
                     <label class="switch">
                         <input type="checkbox" id="mode-toggle">
                         <span class="slider round"></span>
                     </label>
-                    <span class="mode-label">复习模式</span>
+                    <span class="mode-label">背诵模式</span>
                 </div>
             </div>
             <div class="header-actions">
@@ -70,7 +70,7 @@
             <!-- 主内容区 -->
             <main class="content-area">
                 <!-- 背诵模式界面 -->
-                <div id="recitation-mode" class="mode-content active">
+                <div id="recitation-mode" class="mode-content">
 
                     <!-- 工具栏 -->
                     <div class="toolbar">
@@ -80,27 +80,27 @@
                                 <label for="regular-mode">常规</label>
                             </div>
                             <div class="tool-item inputs slider-group">
-                            <label>间隔</label>
-                            <input type="number" id="interval" min="1" value="3">
-                            <div class="slider-container">
-                                <input type="range" id="interval-slider" min="1" max="20" value="3">
+                                <label>间隔</label>
+                                <input type="number" id="interval" min="1" value="3">
+                                <div class="slider-container">
+                                    <input type="range" id="interval-slider" min="1" max="20" value="3">
+                                </div>
+                                <div class="slider-range-labels">
+                                    <span class="min-label">1</span>
+                                    <span class="max-label">20</span>
+                                </div>
                             </div>
-                            <div class="slider-range-labels">
-                                <span class="min-label">1</span>
-                                <span class="max-label">20</span>
+                            <div class="tool-item inputs slider-group">
+                                <label>起始</label>
+                                <input type="number" id="start" min="0" value="1">
+                                <div class="slider-container">
+                                    <input type="range" id="start-slider" min="0" max="10" value="1">
+                                </div>
+                                <div class="slider-range-labels">
+                                    <span class="min-label">0</span>
+                                    <span class="max-label">10</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="tool-item inputs slider-group">
-                            <label>起始</label>
-                            <input type="number" id="start" min="0" value="1">
-                            <div class="slider-container">
-                                <input type="range" id="start-slider" min="0" max="10" value="1">
-                            </div>
-                            <div class="slider-range-labels">
-                                <span class="min-label">0</span>
-                                <span class="max-label">10</span>
-                            </div>
-                        </div>
                         </div>
 
                         <div class="toolbar-divider"></div>
@@ -111,16 +111,16 @@
                                 <label for="random-mode">随机</label>
                             </div>
                             <div class="tool-item inputs slider-group">
-                            <label>频率%</label>
-                            <input type="number" id="random-ratio" min="1" max="100" value="30">
-                            <div class="slider-container">
-                                <input type="range" id="random-ratio-slider" min="1" max="100" value="30">
+                                <label>频率%</label>
+                                <input type="number" id="random-ratio" min="1" max="100" value="30">
+                                <div class="slider-container">
+                                    <input type="range" id="random-ratio-slider" min="1" max="100" value="30">
+                                </div>
+                                <div class="slider-range-labels">
+                                    <span class="min-label">1%</span>
+                                    <span class="max-label">100%</span>
+                                </div>
                             </div>
-                            <div class="slider-range-labels">
-                                <span class="min-label">1%</span>
-                                <span class="max-label">100%</span>
-                            </div>
-                        </div>
                         </div>
 
                         <div class="toolbar-divider"></div>
@@ -177,7 +177,7 @@
                 </div>
 
                 <!-- 复习模式界面 -->
-                <div id="review-mode" class="mode-content">
+                <div id="review-mode" class="mode-content active">
                     <div class="review-container">
                         <div class="review-header">
                             <h2>智能复习</h2>
