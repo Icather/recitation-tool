@@ -185,10 +185,38 @@
                         </div>
 
                         <div class="review-controls">
-                            <label class="checkbox-btn">
-                                <input type="checkbox" id="blank-author-mode">
-                                <span>隐藏作者/朝代</span>
-                            </label>
+                            <div class="combo-control" id="hide-info-control">
+                                <div class="combo-main" id="hide-info-toggle-btn" role="button" tabindex="0">
+                                    <div class="custom-checkbox">
+                                        <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor"
+                                            stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </div>
+                                    <span class="combo-label">隐藏篇目/作者/朝代</span>
+                                </div>
+                                <div class="combo-separator"></div>
+                                <div class="combo-trigger" id="hide-dropdown-trigger" role="button" tabindex="0">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor"
+                                        stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="combo-dropdown" id="hide-dropdown-menu">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" id="hide-title-check" checked>
+                                        <span>篇目名</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" id="hide-dynasty-check" checked>
+                                        <span>朝代</span>
+                                    </label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" id="hide-author-check" checked>
+                                        <span>作者</span>
+                                    </label>
+                                </div>
+                            </div>
                             <button id="generate-review" class="btn-primary">
                                 <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2"
                                     fill="none">

@@ -51,7 +51,18 @@
         generateReviewBtn: document.getElementById('generate-review'),
         reviewContent: document.getElementById('review-content'),
         reviewSentences: document.getElementById('review-sentences'),
-        blankAuthorModeCheckbox: document.getElementById('blank-author-mode')
+        generateReviewBtn: document.getElementById('generate-review'),
+        reviewContent: document.getElementById('review-content'),
+        reviewSentences: document.getElementById('review-sentences'),
+
+        // 新的组合控件
+        hideInfoControl: document.getElementById('hide-info-control'),
+        hideInfoToggleBtn: document.getElementById('hide-info-toggle-btn'),
+        hideDropdownTrigger: document.getElementById('hide-dropdown-trigger'),
+        hideDropdownMenu: document.getElementById('hide-dropdown-menu'),
+        hideTitleCheck: document.getElementById('hide-title-check'),
+        hideDynastyCheck: document.getElementById('hide-dynasty-check'),
+        hideAuthorCheck: document.getElementById('hide-author-check')
     };
 
     let reviewQuestionsGenerated = false;
@@ -662,24 +673,31 @@
             // 构建来源文本，支持联动隐藏作者和朝代
             let sourceText = '';
 
+            // 获取隐藏设置
+            const isHideEnabled = DOM.hideInfoControl.classList.contains('active');
+            const hideTitle = DOM.hideTitleCheck.checked;
+            const hideDynasty = DOM.hideDynastyCheck.checked;
+            const hideAuthor = DOM.hideAuthorCheck.checked;
+
             // 显示标题
             if (question.source) {
-                sourceText += question.source;
+                if (isHideEnabled && hideTitle) {
+                    sourceText += `<span class="blank" data-blank="true" data-text="${question.source}">__________</span>`;
+                } else {
+                    sourceText += question.source;
+                }
             }
 
-            // 显示朝代和作者，实现联动隐藏
+            // 显示朝代和作者
             const hasDynasty = !!question.dynasty;
             const hasAuthor = !!question.author;
 
             if (hasDynasty || hasAuthor) {
-                sourceText += ' · ';
-
-                // 联动隐藏逻辑：如果勾选了隐藏作者/朝代/篇名，则同时隐藏朝代和作者
-                const hideAuthorDynasty = DOM.blankAuthorModeCheckbox.checked;
+                if (sourceText) sourceText += ' · '; // 如果前面有标题，加分隔符
 
                 // 显示朝代（在作者左侧）
                 if (hasDynasty) {
-                    if (hideAuthorDynasty) {
+                    if (isHideEnabled && hideDynasty) {
                         sourceText += `<span class="blank" data-blank="true" data-text="${question.dynasty}">__________</span>`;
                     } else {
                         sourceText += question.dynasty;
@@ -692,7 +710,7 @@
 
                 // 显示作者
                 if (hasAuthor) {
-                    if (hideAuthorDynasty) {
+                    if (isHideEnabled && hideAuthor) {
                         sourceText += `<span class="blank" data-blank="true" data-text="${question.author}">__________</span>`;
                     } else {
                         sourceText += question.author;
@@ -742,6 +760,49 @@
     }
 
     DOM.generateReviewBtn.addEventListener('click', generateReviewQuestions);
+
+    // ==========================================================================
+    // 组合控件交互逻辑
+    // ==========================================================================
+
+    // 1. 主开关点击
+    DOM.hideInfoToggleBtn.addEventListener('click', function () {
+        DOM.hideInfoControl.classList.toggle('active');
+        // 重新生成或更新当前显示（为了简单，重新生成，或者只更新DOM如果只是显示问题）
+        // 但这里如果用户已经生成了题目，点击开关应该立即生效吗？
+        // 为了更好的体验，最好是立即生效。上面的渲染逻辑是生成时决定的 HTML。
+        // 所以我们必须重新生成或者更新 HTML。这里简单起见，调用 generateReviewQuestions
+        // 但是如果没有题目，就不生成
+        if (DOM.reviewSentences.children.length > 0) {
+            generateReviewQuestions();
+        }
+    });
+
+    // 2. 下拉菜单触发
+    DOM.hideDropdownTrigger.addEventListener('click', function (e) {
+        e.stopPropagation(); // 防止冒泡到 document 立即关闭
+        DOM.hideDropdownMenu.classList.toggle('show');
+    });
+
+    // 3. 点击外部关闭下拉菜单
+    document.addEventListener('click', function (e) {
+        if (!DOM.hideDropdownMenu.contains(e.target) && !DOM.hideDropdownTrigger.contains(e.target)) {
+            DOM.hideDropdownMenu.classList.remove('show');
+        }
+    });
+
+    // 4. 下拉选项变化
+    [DOM.hideTitleCheck, DOM.hideDynastyCheck, DOM.hideAuthorCheck].forEach(check => {
+        check.addEventListener('change', () => {
+            // 如果主开关是开着的，选项变化也应立即生效
+            if (DOM.hideInfoControl.classList.contains('active') && DOM.reviewSentences.children.length > 0) {
+                generateReviewQuestions();
+            }
+        });
+
+        // 点击 checkbox 不需要阻止下拉框关闭，因为它是 dropdown 内部点击，上面的 document listener 没有排除 dropdown 内部。
+        // Wait, document listener checks !DOM.hideDropdownMenu.contains(e.target). So clicking inside menu IS safe.
+    });
 
     // ==========================================================================
     // 初始化

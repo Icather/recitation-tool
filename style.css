@@ -1095,3 +1095,168 @@ body:not(.review-mode-active) .mode-switch .mode-label:last-child {
         transform: translateY(0);
     }
 }
+
+/* ==========================================================================
+   Combo Control (Button + Dropdown)
+   ========================================================================== */
+.combo-control {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    position: relative;
+    transition: all var(--transition-normal);
+    color: var(--color-text-muted);
+}
+
+.combo-control.active {
+    background: var(--color-primary);
+    color: white;
+    /* Force white for better contrast on primary */
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(var(--primary-hue), var(--primary-sat), 50%, 0.3);
+}
+
+.combo-main {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-top-left-radius: var(--radius-md);
+    border-bottom-left-radius: var(--radius-md);
+    user-select: none;
+    transition: background var(--transition-fast);
+}
+
+.combo-main:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.combo-control.active .combo-main:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Checkbox in Combo */
+.custom-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid currentColor;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    opacity: 0.7;
+}
+
+.custom-checkbox svg {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.combo-control.active .custom-checkbox {
+    background: white;
+    border-color: white;
+    color: var(--color-primary);
+    opacity: 1;
+}
+
+.combo-control.active .custom-checkbox svg {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.combo-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Vertical Separator */
+.combo-separator {
+    width: 1px;
+    height: 20px;
+    background: currentColor;
+    opacity: 0.2;
+}
+
+.combo-control.active .combo-separator {
+    opacity: 0.3;
+}
+
+/* Dropdown Trigger Arrow */
+.combo-trigger {
+    padding: 8px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-right-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+    transition: background var(--transition-fast);
+}
+
+.combo-trigger:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.combo-control.active .combo-trigger:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Dropdown Menu */
+.combo-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 180px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    /* Stronger shadow for popover */
+    z-index: 1000;
+
+    /* Animation state: hidden */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Show Dropdown */
+.combo-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-fast);
+    color: var(--color-text-main);
+}
+
+.dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-item input[type="checkbox"] {
+    accent-color: var(--color-primary);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.dropdown-item span {
+    font-size: 0.9rem;
+}
