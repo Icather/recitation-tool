@@ -1,268 +1,227 @@
 // 等待DOM加载完成
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ==========================================================================
     // 元素淡入动画
-    const fadeElements = document.querySelectorAll('.section-header, .feature-card, .science-item, .step-item, .testimonial-card');
-    
-    // 设置初始状态
-    fadeElements.forEach(element => {
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(20px)';
-        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    });
-    
-    // 监听滚动事件，实现元素滚动时的淡入效果
-    const observer = new IntersectionObserver((entries) => {
+    // ==========================================================================
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const fadeInObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+                entry.target.classList.add('visible');
+                fadeInObserver.unobserve(entry.target);
             }
         });
-    }, {
-        threshold: 0.1
+    }, observerOptions);
+
+    // 需要淡入动画的元素
+    const fadeElements = document.querySelectorAll(
+        '.section-header, .science-card, .feature-item, .scenario-card, .reference-item, .cta-content'
+    );
+
+    fadeElements.forEach((element, index) => {
+        element.classList.add('fade-in');
+        element.style.transitionDelay = `${index % 4 * 0.1}s`;
+        fadeInObserver.observe(element);
     });
-    
-    fadeElements.forEach(element => {
-        observer.observe(element);
-    });
-    
-    // 统计数字增长动画
-    const statNumbers = document.querySelectorAll('.stat-number');
-    
-    const statObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                animateNumber(entry.target);
-                statObserver.unobserve(entry.target);
-            }
-        });
-    }, {
-        threshold: 0.5
-    });
-    
-    statNumbers.forEach(number => {
-        statObserver.observe(number);
-    });
-    
-    function animateNumber(element) {
-        const target = parseInt(element.innerText);
-        const duration = 2000; // 动画持续时间（毫秒）
-        const steps = 60; // 动画步数
-        const increment = target / (duration / 16.7); // 每16.7ms增加的值（约60fps）
-        let current = 0;
-        
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-                clearInterval(timer);
-                current = target;
-                // 添加额外的符号（如%）
-                element.innerText = element.innerText.includes('%') ? current + '%' : element.innerText.includes('+') ? current + '+' : current;
-            } else {
-                element.innerText = element.innerText.includes('%') ? Math.floor(current) + '%' : element.innerText.includes('+') ? Math.floor(current) + '+' : Math.floor(current);
-            }
-        }, 16.7);
-    }
-    
-    // 平滑滚动效果
+
+    // 添加淡入样式
+    const style = document.createElement('style');
+    style.textContent = `
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    `;
+    document.head.appendChild(style);
+
+    // ==========================================================================
+    // 平滑滚动
+    // ==========================================================================
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            
             const targetId = this.getAttribute('href');
             if (targetId === '#') return;
-            
+
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
+                e.preventDefault();
+                const offsetTop = targetElement.offsetTop - 80;
                 window.scrollTo({
-                    top: targetElement.offsetTop - 80, // 减去导航栏高度
+                    top: offsetTop,
                     behavior: 'smooth'
                 });
             }
         });
     });
-    
-    // 添加导航栏滚动效果
-    const navLinks = document.querySelectorAll('.footer-links a');
-    let currentSection = '';
-    
-    window.addEventListener('scroll', () => {
-        const sections = document.querySelectorAll('section');
-        
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop - 100;
-            const sectionHeight = section.clientHeight;
-            if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
-                currentSection = '#' + section.getAttribute('id');
-            }
+
+    // ==========================================================================
+    // Hero 插图交互
+    // ==========================================================================
+    const illustrationCard = document.querySelector('.illustration-card');
+    if (illustrationCard) {
+        illustrationCard.addEventListener('mouseenter', function () {
+            this.style.animationPlayState = 'paused';
         });
-        
-        navLinks.forEach(link => {
-            link.style.color = link.getAttribute('href') === currentSection ? '#667eea' : 'white';
-        });
-    });
-    
-    // 按钮悬停效果增强
-    const buttons = document.querySelectorAll('.btn-primary, .btn-secondary');
-    
-    buttons.forEach(button => {
-        button.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-            this.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.15)';
-        });
-        
-        button.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '';
-        });
-    });
-    
-    // 为功能卡片添加额外的动画效果
-    const featureCards = document.querySelectorAll('.feature-card');
-    
-    featureCards.forEach((card, index) => {
-        card.style.transitionDelay = `${index * 0.1}s`;
-        
-        card.addEventListener('mouseenter', function() {
-            const icon = this.querySelector('.feature-icon');
-            icon.style.transform = 'scale(1.1)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            const icon = this.querySelector('.feature-icon');
-            icon.style.transform = 'scale(1)';
-        });
-    });
-    
-    // 随机粒子背景效果（简单版）
-    createParticles();
-    
-    function createParticles() {
-        const sections = document.querySelectorAll('.hero-section, .cta-section');
-        
-        sections.forEach(section => {
-            const canvas = document.createElement('canvas');
-            canvas.style.position = 'absolute';
-            canvas.style.top = '0';
-            canvas.style.left = '0';
-            canvas.style.width = '100%';
-            canvas.style.height = '100%';
-            canvas.style.pointerEvents = 'none';
-            canvas.style.zIndex = '1';
-            section.appendChild(canvas);
-            
-            const ctx = canvas.getContext('2d');
-            let particlesArray = [];
-            let resizeObserver;
-            
-            // 设置canvas尺寸
-            function setCanvasSize() {
-                const rect = section.getBoundingClientRect();
-                canvas.width = rect.width;
-                canvas.height = rect.height;
-                init();
-            }
-            
-            // 初始化粒子
-            function init() {
-                particlesArray = [];
-                const particleCount = Math.floor(canvas.width * canvas.height / 10000);
-                
-                for (let i = 0; i < particleCount; i++) {
-                    const size = Math.random() * 2 + 1;
-                    const x = Math.random() * canvas.width;
-                    const y = Math.random() * canvas.height;
-                    const speedX = (Math.random() - 0.5) * 0.3;
-                    const speedY = (Math.random() - 0.5) * 0.3;
-                    
-                    particlesArray.push({
-                        x, y, size, speedX, speedY
-                    });
-                }
-            }
-            
-            // 绘制粒子
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                particlesArray.forEach(particle => {
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                    ctx.beginPath();
-                    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-                
-                connectParticles();
-            }
-            
-            // 连接邻近的粒子
-            function connectParticles() {
-                const opacityValue = 0.3;
-                
-                for (let a = 0; a < particlesArray.length; a++) {
-                    for (let b = a; b < particlesArray.length; b++) {
-                        const dx = particlesArray[a].x - particlesArray[b].x;
-                        const dy = particlesArray[a].y - particlesArray[b].y;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-                        
-                        if (distance < 100) {
-                            ctx.strokeStyle = `rgba(255, 255, 255, ${opacityValue - (distance / 100) * opacityValue})`;
-                            ctx.lineWidth = 0.5;
-                            ctx.beginPath();
-                            ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                            ctx.stroke();
-                        }
-                    }
-                }
-            }
-            
-            // 更新粒子位置
-            function update() {
-                particlesArray.forEach(particle => {
-                    particle.x += particle.speedX;
-                    particle.y += particle.speedY;
-                    
-                    if (particle.x < 0 || particle.x > canvas.width) {
-                        particle.speedX = -particle.speedX;
-                    }
-                    
-                    if (particle.y < 0 || particle.y > canvas.height) {
-                        particle.speedY = -particle.speedY;
-                    }
-                });
-            }
-            
-            // 动画循环
-            function animate() {
-                draw();
-                update();
-                requestAnimationFrame(animate);
-            }
-            
-            // 设置响应式
-            resizeObserver = new ResizeObserver(() => {
-                setCanvasSize();
-            });
-            
-            resizeObserver.observe(section);
-            setCanvasSize();
-            animate();
-            
-            // 清理函数
-            section.dataset.particlesCleanup = () => {
-                resizeObserver.disconnect();
-            };
+
+        illustrationCard.addEventListener('mouseleave', function () {
+            this.style.animationPlayState = 'running';
         });
     }
-    
-    // 页面卸载时清理资源
-    window.addEventListener('beforeunload', function() {
-        const sections = document.querySelectorAll('.hero-section, .cta-section');
-        sections.forEach(section => {
-            if (section.dataset.particlesCleanup) {
-                section.dataset.particlesCleanup();
+
+    // ==========================================================================
+    // 科学卡片悬停效果
+    // ==========================================================================
+    const scienceCards = document.querySelectorAll('.science-card');
+    scienceCards.forEach(card => {
+        card.addEventListener('mouseenter', function () {
+            const icon = this.querySelector('.science-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1.1)';
+                icon.style.transition = 'transform 0.3s ease';
+            }
+        });
+
+        card.addEventListener('mouseleave', function () {
+            const icon = this.querySelector('.science-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1)';
             }
         });
     });
+
+    // ==========================================================================
+    // Demo 卡片打字机效果
+    // ==========================================================================
+    const demoCards = document.querySelectorAll('.demo-card');
+
+    const demoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const blanks = entry.target.querySelectorAll('.blank, .blank-inline, .text-blank');
+                blanks.forEach((blank, index) => {
+                    setTimeout(() => {
+                        blank.classList.add('pulse');
+                    }, index * 200);
+                });
+                demoObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    demoCards.forEach(card => {
+        demoObserver.observe(card);
+    });
+
+    // 添加脉冲动画样式
+    const pulseStyle = document.createElement('style');
+    pulseStyle.textContent = `
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+    `;
+    document.head.appendChild(pulseStyle);
+
+    // ==========================================================================
+    // 场景卡片序列动画
+    // ==========================================================================
+    const scenarioCards = document.querySelectorAll('.scenario-card');
+    scenarioCards.forEach((card, index) => {
+        card.style.transitionDelay = `${index * 0.15}s`;
+    });
+
+    // ==========================================================================
+    // 按钮点击波纹效果
+    // ==========================================================================
+    const buttons = document.querySelectorAll('.btn-primary');
+    buttons.forEach(button => {
+        button.addEventListener('click', function (e) {
+            const ripple = document.createElement('span');
+            ripple.style.cssText = `
+                position: absolute;
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            `;
+
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+
+            this.style.position = 'relative';
+            this.style.overflow = 'hidden';
+            this.appendChild(ripple);
+
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
+
+    // 添加波纹动画样式
+    const rippleStyle = document.createElement('style');
+    rippleStyle.textContent = `
+        @keyframes ripple {
+            to { transform: scale(4); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(rippleStyle);
+
+    // ==========================================================================
+    // 滚动进度指示器（可选）
+    // ==========================================================================
+    const progressBar = document.createElement('div');
+    progressBar.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        z-index: 9999;
+        transition: width 0.1s ease;
+        width: 0%;
+    `;
+    document.body.appendChild(progressBar);
+
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        progressBar.style.width = scrollPercent + '%';
+    });
+
+    // ==========================================================================
+    // 键盘导航支持
+    // ==========================================================================
+    document.addEventListener('keydown', function (e) {
+        // 按 Home 键回到顶部
+        if (e.key === 'Home') {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        // 按 End 键到底部
+        if (e.key === 'End') {
+            e.preventDefault();
+            window.scrollTo({
+                top: document.documentElement.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    });
+
 });
