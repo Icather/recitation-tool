@@ -613,17 +613,29 @@
         const sentences = [];
         text.paragraphs.forEach(paragraph => {
             if (paragraph.content) {
-                const paragraphSentences = paragraph.content.split(/[。！？]/).filter(s => s.trim().length > 0);
-                paragraphSentences.forEach(sentence => {
-                    const cleanSentence = sentence.trim();
-                    if (cleanSentence.length > 0) {
-                        sentences.push({
-                            text: cleanSentence + '。',
-                            source: text.title,
-                            author: text.author,
-                            dynasty: text.dynasty
-                        });
+                // 使用正则分割，保留分隔符
+                const parts = paragraph.content.split(/([。！？])/).filter(s => s.length > 0);
+                const paragraphSentences = [];
+
+                // 重组句子（内容 + 标点）
+                for (let i = 0; i < parts.length; i += 2) {
+                    const content = parts[i].trim();
+                    const punctuation = parts[i + 1] || '。';
+                    if (content.length > 0) {
+                        paragraphSentences.push(content + punctuation);
                     }
+                }
+
+                // 为每个句子添加索引和段落句子引用
+                paragraphSentences.forEach((sentence, index) => {
+                    sentences.push({
+                        text: sentence,
+                        source: text.title,
+                        author: text.author,
+                        dynasty: text.dynasty,
+                        paragraphSentences: paragraphSentences,  // 段落内所有句子
+                        sentenceIndex: index  // 当前句子在段落中的索引
+                    });
                 });
             }
         });
@@ -647,7 +659,57 @@
             }
         }
 
-        if (clauses.length <= 1) return { original: sentence.text, blanked: sentence.text, blankIndex: -1 };
+        // 如果只有一个分句，尝试与相邻句子合并
+        if (clauses.length <= 1) {
+            const paragraphSentences = sentence.paragraphSentences;
+            const currentIndex = sentence.sentenceIndex;
+
+            // 如果没有段落信息或只有一句话，无法合并
+            if (!paragraphSentences || paragraphSentences.length <= 1) {
+                return { original: sentence.text, blanked: sentence.text, blankIndex: -1 };
+            }
+
+            let combinedText = '';
+            let blankSentenceText = sentence.text;
+
+            // 检查可以合并的方向
+            const canMergeWithNext = currentIndex < paragraphSentences.length - 1;
+            const canMergeWithPrev = currentIndex > 0;
+
+            // 随机选择合并方向，除非只有一个方向可选
+            let mergeWithNext;
+            if (canMergeWithNext && canMergeWithPrev) {
+                mergeWithNext = Math.random() < 0.5;  // 随机选择
+            } else if (canMergeWithNext) {
+                mergeWithNext = true;
+            } else if (canMergeWithPrev) {
+                mergeWithNext = false;
+            } else {
+                return { original: sentence.text, blanked: sentence.text, blankIndex: -1 };
+            }
+
+            if (mergeWithNext) {
+                // 与后一句合并：当前句挖空
+                combinedText = sentence.text + paragraphSentences[currentIndex + 1];
+            } else {
+                // 与前一句合并：当前句挖空
+                combinedText = paragraphSentences[currentIndex - 1] + sentence.text;
+            }
+
+            // 挖空当前句子（去掉句末标点后挖空）
+            const blankTextWithoutPunctuation = blankSentenceText.replace(/[。！？]$/, '');
+            const blankedCombined = combinedText.replace(blankTextWithoutPunctuation, '__________');
+
+            return {
+                original: combinedText,
+                blanked: blankedCombined,
+                blankIndex: 0,  // 标记为有效挖空
+                blankText: blankTextWithoutPunctuation,
+                source: sentence.source,
+                author: sentence.author,
+                dynasty: sentence.dynasty
+            };
+        }
 
         // 随机选择一个分句进行挖空（排除最后一个,因为它通常包含句末标点）
         const randomIndex = Math.floor(Math.random() * (clauses.length - 1));
@@ -688,18 +750,34 @@
         }
 
         const reviewQuestions = [];
+        const targetCount = 5; // 目标题目数量
+
+        // 从每个篇目收集所有可用句子
+        const allAvailableSentences = [];
         randomTexts.forEach(text => {
             const sentences = extractSentencesFromText(text);
-            if (sentences.length > 0) {
-                const randomSentence = sentences[Math.floor(Math.random() * sentences.length)];
-                const blankedSentence = createBlankSentence(randomSentence);
-                if (blankedSentence.blankIndex >= 0) {
-                    // 生成唯一ID
-                    blankedSentence.uid = `${blankedSentence.source || 'unknown'}_${blankedSentence.original.substring(0, 20)}`;
+            sentences.forEach(sentence => {
+                allAvailableSentences.push(sentence);
+            });
+        });
+
+        // 随机打乱所有句子
+        const shuffledSentences = [...allAvailableSentences].sort(() => Math.random() - 0.5);
+
+        // 尝试生成目标数量的题目
+        for (const sentence of shuffledSentences) {
+            if (reviewQuestions.length >= targetCount) break;
+
+            const blankedSentence = createBlankSentence(sentence);
+            if (blankedSentence.blankIndex >= 0) {
+                // 生成唯一ID
+                blankedSentence.uid = `${blankedSentence.source || 'unknown'}_${blankedSentence.original.substring(0, 20)}`;
+                // 避免重复的句子
+                if (!reviewQuestions.some(q => q.uid === blankedSentence.uid)) {
                     reviewQuestions.push(blankedSentence);
                 }
             }
-        });
+        }
 
         // 保存当前题目供熟悉度判定使用
         currentReviewQuestions = reviewQuestions;
