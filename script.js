@@ -77,6 +77,7 @@
     const unknownCards = new Map();  // key: unique id (source+text), value: card data
     const familiarCards = new Set(); // set of unique ids
     let currentReviewQuestions = [];  // 当前显示的题目
+    const selectedTextsForReview = new Set(); // 复习模式下选中的篇目ID
 
     // ==========================================================================
     // 核心逻辑：文本处理
@@ -472,9 +473,22 @@
                     li.dataset.textId = text.id;
 
                     li.addEventListener('click', function () {
-                        document.querySelectorAll('#texts-list-ul li').forEach(item => item.classList.remove('selected'));
-                        this.classList.add('selected');
-                        showParagraphs(text);
+                        const isReviewMode = !DOM.modeToggle.checked;
+
+                        if (isReviewMode) {
+                            // 复习模式：切换选中状态（多选）
+                            this.classList.toggle('selected');
+                            if (this.classList.contains('selected')) {
+                                selectedTextsForReview.add(text.id);
+                            } else {
+                                selectedTextsForReview.delete(text.id);
+                            }
+                        } else {
+                            // 背诵模式：单选并跳转段落页
+                            document.querySelectorAll('#texts-list-ul li').forEach(item => item.classList.remove('selected'));
+                            this.classList.add('selected');
+                            showParagraphs(text);
+                        }
                     });
 
                     DOM.textsListUl.appendChild(li);
@@ -579,12 +593,18 @@
     // ==========================================================================
     function getRandomTexts(count = 5) {
         const classicTexts = window.RecitationData && window.RecitationData.texts ? window.RecitationData.texts : [];
-        const validTexts = classicTexts.filter(text =>
+        let validTexts = classicTexts.filter(text =>
             text.category !== '学期' &&
             text.paragraphs &&
             text.paragraphs.length > 0 &&
             text.paragraphs.some(p => p.content && p.content.trim().length > 0)
         );
+
+        // 如果有选中的篇目，只使用选中的篇目
+        if (selectedTextsForReview.size > 0) {
+            validTexts = validTexts.filter(text => selectedTextsForReview.has(text.id));
+        }
+
         const shuffled = [...validTexts].sort(() => Math.random() - 0.5);
         return shuffled.slice(0, Math.min(count, shuffled.length));
     }
@@ -611,9 +631,25 @@
     }
 
     function createBlankSentence(sentence) {
-        const clauses = sentence.text.split(/[，；]/).filter(c => c.trim().length > 0);
+        // 使用正则表达式分割，同时保留分隔符
+        const splitRegex = /([，；])/;
+        const parts = sentence.text.split(splitRegex).filter(p => p.length > 0);
+
+        // 提取分句和分隔符
+        const clauses = [];
+        const separators = [];
+
+        for (let i = 0; i < parts.length; i++) {
+            if (/^[，；]$/.test(parts[i])) {
+                separators.push(parts[i]);
+            } else if (parts[i].trim().length > 0) {
+                clauses.push(parts[i].trim());
+            }
+        }
+
         if (clauses.length <= 1) return { original: sentence.text, blanked: sentence.text, blankIndex: -1 };
 
+        // 随机选择一个分句进行挖空（排除最后一个,因为它通常包含句末标点）
         const randomIndex = Math.floor(Math.random() * (clauses.length - 1));
         const selectedClause = clauses[randomIndex].trim();
         const blankedClause = '__________';
@@ -623,10 +659,11 @@
             if (i === randomIndex) {
                 blankedSentence += blankedClause;
             } else {
-                blankedSentence += clauses[i].trim();
+                blankedSentence += clauses[i];
             }
-            if (i < clauses.length - 1) {
-                blankedSentence += i === clauses.length - 2 ? '。' : '，';
+            // 使用原始的分隔符，如果没有则跳过
+            if (i < separators.length) {
+                blankedSentence += separators[i];
             }
         }
 
