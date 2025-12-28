@@ -51,9 +51,6 @@
         generateReviewBtn: document.getElementById('generate-review'),
         reviewContent: document.getElementById('review-content'),
         reviewSentences: document.getElementById('review-sentences'),
-        generateReviewBtn: document.getElementById('generate-review'),
-        reviewContent: document.getElementById('review-content'),
-        reviewSentences: document.getElementById('review-sentences'),
 
         // 新的组合控件
         hideInfoControl: document.getElementById('hide-info-control'),
@@ -62,12 +59,24 @@
         hideDropdownMenu: document.getElementById('hide-dropdown-menu'),
         hideTitleCheck: document.getElementById('hide-title-check'),
         hideDynastyCheck: document.getElementById('hide-dynasty-check'),
-        hideAuthorCheck: document.getElementById('hide-author-check')
+        hideAuthorCheck: document.getElementById('hide-author-check'),
+
+        // 生疏本模态窗口
+        viewUnknownCardsBtn: document.getElementById('view-unknown-cards-btn'),
+        unknownCardsModal: document.getElementById('unknown-cards-modal'),
+        closeModalBtn: document.getElementById('close-modal-btn'),
+        unknownSourceList: document.getElementById('unknown-source-list'),
+        unknownCardsContainer: document.getElementById('unknown-cards-container')
     };
 
     let reviewQuestionsGenerated = false;
     const semesterSelector = document.createElement('select');
     semesterSelector.id = 'semester-selector';
+
+    // 生疏本与熟悉度数据（内存存储，刷新即丢失）
+    const unknownCards = new Map();  // key: unique id (source+text), value: card data
+    const familiarCards = new Set(); // set of unique ids
+    let currentReviewQuestions = [];  // 当前显示的题目
 
     // ==========================================================================
     // 核心逻辑：文本处理
@@ -647,14 +656,22 @@
             if (sentences.length > 0) {
                 const randomSentence = sentences[Math.floor(Math.random() * sentences.length)];
                 const blankedSentence = createBlankSentence(randomSentence);
-                if (blankedSentence.blankIndex >= 0) reviewQuestions.push(blankedSentence);
+                if (blankedSentence.blankIndex >= 0) {
+                    // 生成唯一ID
+                    blankedSentence.uid = `${blankedSentence.source || 'unknown'}_${blankedSentence.original.substring(0, 20)}`;
+                    reviewQuestions.push(blankedSentence);
+                }
             }
         });
+
+        // 保存当前题目供熟悉度判定使用
+        currentReviewQuestions = reviewQuestions;
 
         // 渲染题目
         reviewQuestions.forEach((question, index) => {
             const el = document.createElement('div');
             el.className = 'review-sentence';
+            el.dataset.uid = question.uid;
 
             const num = document.createElement('span');
             num.className = 'sentence-number';
@@ -720,9 +737,29 @@
 
             source.innerHTML = `—— ${sourceText}`;
 
+            // 标记按钮（生疏本）
+            const actions = document.createElement('div');
+            actions.className = 'sentence-actions';
+
+            const markBtn = document.createElement('button');
+            markBtn.className = 'mark-btn';
+            if (unknownCards.has(question.uid)) {
+                markBtn.classList.add('active');
+            }
+            markBtn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
+            markBtn.title = '标记为生疏';
+            markBtn.dataset.uid = question.uid;
+            markBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                toggleUnknownCard(question, this);
+            });
+
+            actions.appendChild(markBtn);
+
             el.appendChild(num);
             el.appendChild(content);
             el.appendChild(source);
+            el.appendChild(actions);
 
             // 存储数据用于交互
             el.dataset.blankText = question.blankText;
@@ -731,8 +768,9 @@
         });
 
         DOM.reviewContent.classList.remove('hidden');
-        addBlankClickListeners();
+        addBlankClickListenersWithFamiliarity();
     }
+
 
     function processSentenceForDisplay(sentence, hiddenText) {
         return sentence.replace(/__________/g, `<span class="blank" data-blank="true" data-text="${hiddenText}">__________</span>`);
@@ -803,6 +841,275 @@
         // 点击 checkbox 不需要阻止下拉框关闭，因为它是 dropdown 内部点击，上面的 document listener 没有排除 dropdown 内部。
         // Wait, document listener checks !DOM.hideDropdownMenu.contains(e.target). So clicking inside menu IS safe.
     });
+
+    // ==========================================================================
+    // 生疏本与熟悉度功能
+    // ==========================================================================
+
+    // 切换生疏标记
+    function toggleUnknownCard(question, btnElement) {
+        const uid = question.uid;
+        if (unknownCards.has(uid)) {
+            // 移除生疏标记
+            unknownCards.delete(uid);
+            btnElement.classList.remove('active');
+            // 检查是否达到熟悉条件（所有填空都已显示）
+            checkAndSetFamiliar(uid);
+        } else {
+            // 添加生疏标记
+            unknownCards.set(uid, {
+                uid: uid,
+                text: question.original,
+                blanked: question.blanked,
+                source: question.source,
+                author: question.author,
+                dynasty: question.dynasty
+            });
+            btnElement.classList.add('active');
+            // 从熟悉中移除
+            familiarCards.delete(uid);
+        }
+    }
+
+    // 检查并设置熟悉状态
+    function checkAndSetFamiliar(uid) {
+        // 如果已被标记为生疏，则不标记为熟悉
+        if (unknownCards.has(uid)) return;
+
+        // 查找对应的句子元素
+        const sentenceEl = document.querySelector(`.review-sentence[data-uid="${uid}"]`);
+        if (!sentenceEl) return;
+
+        // 检查该句子的所有填空是否都已显示
+        const blanks = sentenceEl.querySelectorAll('.sentence-content .blank[data-blank="true"]');
+        const allRevealed = Array.from(blanks).every(b => b.classList.contains('revealed'));
+
+        if (allRevealed && blanks.length > 0) {
+            familiarCards.add(uid);
+        }
+    }
+
+    // 修改填空点击监听器以支持熟悉度检测
+    function addBlankClickListenersWithFamiliarity() {
+        const blanks = document.querySelectorAll('.blank[data-blank="true"]');
+        blanks.forEach(blank => {
+            // 移除旧的监听器（通过克隆节点）
+            const newBlank = blank.cloneNode(true);
+            blank.parentNode.replaceChild(newBlank, blank);
+
+            newBlank.addEventListener('click', function () {
+                let blankText = this.dataset.text;
+                if (!blankText) {
+                    const parent = this.closest('.review-sentence');
+                    if (parent) blankText = parent.dataset.blankText;
+                }
+
+                if (this.classList.contains('revealed')) {
+                    this.textContent = '__________';
+                    this.classList.remove('revealed');
+                } else {
+                    this.textContent = blankText;
+                    this.classList.add('revealed');
+                }
+
+                // 检查熟悉度
+                const sentenceEl = this.closest('.review-sentence');
+                if (sentenceEl && sentenceEl.dataset.uid) {
+                    checkAndSetFamiliar(sentenceEl.dataset.uid);
+                }
+            });
+        });
+    }
+
+    // 打开生疏本模态窗口
+    function openUnknownCardsModal() {
+        renderUnknownCardsModal();
+        DOM.unknownCardsModal.classList.remove('hidden');
+    }
+
+    // 关闭生疏本模态窗口
+    function closeUnknownCardsModal() {
+        DOM.unknownCardsModal.classList.add('hidden');
+    }
+
+    // 渲染生疏本模态窗口内容
+    function renderUnknownCardsModal(filterSource = null) {
+        // 按篇目分组
+        const grouped = {};
+        unknownCards.forEach((card, uid) => {
+            const source = card.source || '未知来源';
+            if (!grouped[source]) {
+                grouped[source] = { unknown: [], familiar: 0, total: 0 };
+            }
+            grouped[source].unknown.push(card);
+            grouped[source].total++;
+        });
+
+        // 统计熟悉卡片
+        familiarCards.forEach(uid => {
+            // 根据uid解析source
+            const parts = uid.split('_');
+            const source = parts[0] || '未知来源';
+            if (!grouped[source]) {
+                grouped[source] = { unknown: [], familiar: 0, total: 0 };
+            }
+            grouped[source].familiar++;
+            grouped[source].total++;
+        });
+
+        // 渲染侧边栏
+        DOM.unknownSourceList.innerHTML = '';
+        const sources = Object.keys(grouped);
+
+        if (sources.length === 0) {
+            // 没有数据，显示空状态
+            DOM.unknownCardsContainer.innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1" fill="none">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <p>还没有标记任何生疏句子</p>
+                    <p class="sub-text">在复习模式中点击 ❤️ 即可添加</p>
+                </div>
+            `;
+            return;
+        }
+
+        sources.forEach((source, idx) => {
+            const data = grouped[source];
+            const li = document.createElement('li');
+            if (filterSource === source || (filterSource === null && idx === 0)) {
+                li.classList.add('active');
+            }
+            li.dataset.source = source;
+
+            // 标题行
+            const titleRow = document.createElement('div');
+            titleRow.className = 'source-title-row';
+
+            const titleSpan = document.createElement('span');
+            titleSpan.textContent = source;
+
+            const countSpan = document.createElement('span');
+            countSpan.className = 'count';
+            countSpan.textContent = data.unknown.length;
+
+            titleRow.appendChild(titleSpan);
+            titleRow.appendChild(countSpan);
+            li.appendChild(titleRow);
+
+            // 熟悉度条
+            const total = data.unknown.length + data.familiar;
+            if (total > 0) {
+                const bar = document.createElement('div');
+                bar.className = 'familiarity-bar';
+
+                const familiarPercent = (data.familiar / total) * 100;
+                const unknownPercent = (data.unknown.length / total) * 100;
+
+                if (data.familiar > 0) {
+                    const familiarSeg = document.createElement('div');
+                    familiarSeg.className = 'familiar-segment';
+                    familiarSeg.style.width = `${familiarPercent}%`;
+                    bar.appendChild(familiarSeg);
+                }
+
+                if (data.unknown.length > 0) {
+                    const unknownSeg = document.createElement('div');
+                    unknownSeg.className = 'unknown-segment';
+                    unknownSeg.style.width = `${unknownPercent}%`;
+                    bar.appendChild(unknownSeg);
+                }
+
+                li.appendChild(bar);
+            }
+
+            li.addEventListener('click', function () {
+                DOM.unknownSourceList.querySelectorAll('li').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                renderUnknownCardsList(this.dataset.source);
+            });
+
+            DOM.unknownSourceList.appendChild(li);
+        });
+
+        // 渲染第一个篇目的卡片
+        const activeSource = filterSource || sources[0];
+        renderUnknownCardsList(activeSource);
+    }
+
+    // 渲染指定篇目的卡片列表
+    function renderUnknownCardsList(source) {
+        const cards = [];
+        unknownCards.forEach(card => {
+            if ((card.source || '未知来源') === source) {
+                cards.push(card);
+            }
+        });
+
+        if (cards.length === 0) {
+            DOM.unknownCardsContainer.innerHTML = `
+                <div class="empty-state">
+                    <p>该篇目暂无生疏句子</p>
+                </div>
+            `;
+            return;
+        }
+
+        DOM.unknownCardsContainer.innerHTML = '';
+        cards.forEach(card => {
+            const item = document.createElement('div');
+            item.className = 'unknown-card-item';
+            item.dataset.uid = card.uid;
+
+            const content = document.createElement('div');
+            content.className = 'item-content';
+            content.textContent = card.text;
+
+            const sourceInfo = document.createElement('div');
+            sourceInfo.className = 'item-source';
+            let sourceText = card.source || '';
+            if (card.dynasty) sourceText += ` · ${card.dynasty}`;
+            if (card.author) sourceText += ` · ${card.author}`;
+            sourceInfo.textContent = sourceText ? `—— ${sourceText}` : '';
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-btn';
+            removeBtn.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+            removeBtn.title = '移除';
+            removeBtn.addEventListener('click', function () {
+                unknownCards.delete(card.uid);
+                // 更新复习模式中的按钮状态
+                const reviewBtn = document.querySelector(`.mark-btn[data-uid="${card.uid}"]`);
+                if (reviewBtn) {
+                    reviewBtn.classList.remove('active');
+                }
+                // 重新渲染模态窗口
+                renderUnknownCardsModal(source);
+            });
+
+            item.appendChild(content);
+            item.appendChild(sourceInfo);
+            item.appendChild(removeBtn);
+            DOM.unknownCardsContainer.appendChild(item);
+        });
+    }
+
+    // 生疏本模态窗口事件绑定
+    if (DOM.viewUnknownCardsBtn) {
+        DOM.viewUnknownCardsBtn.addEventListener('click', openUnknownCardsModal);
+    }
+    if (DOM.closeModalBtn) {
+        DOM.closeModalBtn.addEventListener('click', closeUnknownCardsModal);
+    }
+    if (DOM.unknownCardsModal) {
+        DOM.unknownCardsModal.addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeUnknownCardsModal();
+            }
+        });
+    }
+
 
     // ==========================================================================
     // 初始化
