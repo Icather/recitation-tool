@@ -12,6 +12,11 @@
     <div class="app-container">
         <!-- 顶部导航栏 -->
         <header class="app-header">
+            <button id="sidebar-toggle" class="sidebar-toggle-btn" aria-label="打开菜单">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <div class="logo">
                 <h1>你就背吧</h1>
             </div>
@@ -35,6 +40,9 @@
                 </a>
             </div>
         </header>
+
+        <!-- 侧边栏遮罩层 -->
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
         <div class="main-layout">
             <!-- 左侧边栏：篇目列表 -->

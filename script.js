@@ -66,7 +66,12 @@
         unknownCardsModal: document.getElementById('unknown-cards-modal'),
         closeModalBtn: document.getElementById('close-modal-btn'),
         unknownSourceList: document.getElementById('unknown-source-list'),
-        unknownCardsContainer: document.getElementById('unknown-cards-container')
+        unknownCardsContainer: document.getElementById('unknown-cards-container'),
+
+        // 移动端相关
+        sidebarToggle: document.getElementById('sidebar-toggle'),
+        sidebarOverlay: document.getElementById('sidebar-overlay'),
+        sidebar: document.querySelector('.sidebar')
     };
 
     let reviewQuestionsGenerated = false;
@@ -488,6 +493,10 @@
                             document.querySelectorAll('#texts-list-ul li').forEach(item => item.classList.remove('selected'));
                             this.classList.add('selected');
                             showParagraphs(text);
+                            // 移动端：选择后自动关闭侧边栏
+                            if (isMobileDevice()) {
+                                closeSidebar();
+                            }
                         }
                     });
 
@@ -1227,9 +1236,59 @@
 
 
     // ==========================================================================
+    // 移动端设备检测与侧边栏控制
+    // ==========================================================================
+    function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    function initMobileSupport() {
+        // 添加设备类名
+        if (isMobileDevice()) {
+            document.body.classList.add('is-mobile');
+        } else {
+            document.body.classList.add('is-desktop');
+        }
+
+        // 侧边栏切换按钮事件
+        if (DOM.sidebarToggle) {
+            DOM.sidebarToggle.addEventListener('click', toggleSidebar);
+        }
+
+        // 遮罩层点击关闭侧边栏
+        if (DOM.sidebarOverlay) {
+            DOM.sidebarOverlay.addEventListener('click', closeSidebar);
+        }
+    }
+
+    function toggleSidebar() {
+        const isOpen = DOM.sidebar.classList.contains('open');
+        if (isOpen) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    }
+
+    function openSidebar() {
+        DOM.sidebar.classList.add('open');
+        DOM.sidebarOverlay.classList.add('active');
+        DOM.sidebarToggle.classList.add('active');
+    }
+
+    function closeSidebar() {
+        DOM.sidebar.classList.remove('open');
+        DOM.sidebarOverlay.classList.remove('active');
+        DOM.sidebarToggle.classList.remove('active');
+    }
+
+    // ==========================================================================
     // 初始化
     // ==========================================================================
     window.addEventListener('DOMContentLoaded', function () {
+        // 初始化移动端支持（必须在最前面）
+        initMobileSupport();
+
         loadSampleText();
         toggleControlElements();
         initSemesterSelector();
