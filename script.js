@@ -493,10 +493,7 @@
                             document.querySelectorAll('#texts-list-ul li').forEach(item => item.classList.remove('selected'));
                             this.classList.add('selected');
                             showParagraphs(text);
-                            // 移动端：选择后自动关闭侧边栏
-                            if (isMobileDevice()) {
-                                closeSidebar();
-                            }
+                            // 移动端：不在此处关闭侧边栏，等用户选择段落后再关闭
                         }
                     });
 
@@ -531,6 +528,10 @@
             const fullText = text.paragraphs.map(p => p.content).join('\n\n');
             DOM.inputText.value = fullText;
             switchToEditView(); // 自动切回编辑模式让用户看到内容
+            // 移动端：选择后关闭侧边栏
+            if (isMobileDevice()) {
+                closeSidebar();
+            }
         });
         DOM.paragraphsContainer.appendChild(selectAllBtn);
 
@@ -553,6 +554,10 @@
             btn.addEventListener('click', function () {
                 DOM.inputText.value = paragraph.content;
                 switchToEditView();
+                // 移动端：选择后关闭侧边栏
+                if (isMobileDevice()) {
+                    closeSidebar();
+                }
             });
 
             card.appendChild(title);

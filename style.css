@@ -1693,13 +1693,14 @@ body:not(.review-mode-active) .mode-switch .mode-label:last-child {
     position: fixed;
     top: var(--header-height);
     left: 0;
-    bottom: 0;
+    height: 80vh;
     width: 85%;
     max-width: 320px;
     z-index: 95;
     transform: translateX(-100%);
     transition: transform var(--transition-normal);
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+    border-bottom-right-radius: var(--radius-lg);
 }
 
 .is-mobile .sidebar.open {
