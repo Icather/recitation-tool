@@ -1607,3 +1607,324 @@ body:not(.review-mode-active) .mode-switch .mode-label:last-child {
         font-size: 1.1rem;
     }
 }
+
+/* ==========================================================================
+   Mobile Device Styles (based on User Agent detection)
+   Uses .is-mobile class instead of media queries
+   ========================================================================== */
+
+/* Hamburger Menu Button - Hidden on Desktop */
+.sidebar-toggle-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast);
+}
+
+.sidebar-toggle-btn span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-text-main);
+    border-radius: 2px;
+    transition: all var(--transition-normal);
+}
+
+.sidebar-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Hamburger to X animation */
+.sidebar-toggle-btn.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.sidebar-toggle-btn.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.sidebar-toggle-btn.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Sidebar Overlay - Hidden by default */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ==========================================================================
+   Mobile Device Only Styles
+   ========================================================================== */
+.is-mobile .sidebar-toggle-btn {
+    display: flex;
+}
+
+.is-mobile .sidebar-overlay {
+    display: block;
+}
+
+/* Mobile Sidebar - Drawer Style */
+.is-mobile .sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    bottom: 0;
+    width: 85%;
+    max-width: 320px;
+    z-index: 95;
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.is-mobile .sidebar.open {
+    transform: translateX(0);
+}
+
+/* Mobile Header Adjustments */
+.is-mobile .app-header {
+    padding: 0 var(--spacing-sm);
+}
+
+.is-mobile .logo h1 {
+    font-size: 1.2rem;
+}
+
+/* Mobile Mode Switch - Compact */
+.is-mobile .mode-switch-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.is-mobile .mode-switch {
+    transform: scale(0.85);
+}
+
+.is-mobile .mode-label {
+    font-size: 0.75rem;
+}
+
+/* Mobile Scroll Support */
+.is-mobile body,
+body.is-mobile {
+    overflow: auto;
+    height: auto;
+    min-height: 100vh;
+}
+
+.is-mobile .app-container {
+    height: auto;
+    min-height: 100vh;
+}
+
+.is-mobile .content-area {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.is-mobile .mode-content {
+    height: auto;
+    min-height: calc(100vh - var(--header-height));
+    overflow-y: visible;
+}
+
+.is-mobile .mode-content.active {
+    display: block;
+}
+
+.is-mobile #review-mode {
+    padding-bottom: 80px;
+}
+
+/* Mobile Main Layout */
+.is-mobile .main-layout {
+    flex-direction: column;
+}
+
+/* Mobile Toolbar - Compact */
+.is-mobile .toolbar {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.is-mobile .toolbar-group {
+    padding: 6px 10px;
+    gap: 8px;
+}
+
+.is-mobile .toolbar-divider {
+    display: none;
+}
+
+.is-mobile .toolbar-spacer {
+    display: none;
+}
+
+.is-mobile .slider-group {
+    display: none;
+}
+
+.is-mobile .slider-range-labels {
+    display: none;
+}
+
+.is-mobile input[type="range"] {
+    display: none;
+}
+
+.is-mobile .tool-item.inputs input[type="number"] {
+    width: 45px;
+    padding: 4px;
+    font-size: 0.8rem;
+}
+
+.is-mobile .tool-item label {
+    font-size: 0.8rem;
+}
+
+.is-mobile .view-toggle {
+    width: 100%;
+    justify-content: center;
+    margin-top: var(--spacing-sm);
+}
+
+/* Mobile Editor Container */
+.is-mobile .editor-container {
+    margin: var(--spacing-sm);
+}
+
+.is-mobile .layer textarea {
+    padding: var(--spacing-md);
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+/* Mobile Review Mode */
+.is-mobile .review-container {
+    padding: var(--spacing-md);
+}
+
+.is-mobile .review-header {
+    padding: var(--spacing-md);
+}
+
+.is-mobile .review-header h2 {
+    font-size: 1.3rem;
+}
+
+.is-mobile .review-header p {
+    font-size: 0.85rem;
+}
+
+.is-mobile .review-controls {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+}
+
+.is-mobile .review-controls .btn-primary,
+.is-mobile .review-controls .btn-secondary {
+    width: 100%;
+    justify-content: center;
+}
+
+.is-mobile .combo-control {
+    width: 100%;
+}
+
+.is-mobile .combo-main {
+    flex: 1;
+}
+
+/* Mobile Review Sentences */
+.is-mobile .review-sentence {
+    padding: var(--spacing-md);
+}
+
+.is-mobile .sentence-content {
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.is-mobile .source-info {
+    font-size: 0.75rem;
+}
+
+.is-mobile .sentence-actions {
+    margin-top: var(--spacing-sm);
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+}
+
+.is-mobile .sentence-actions button {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+}
+
+/* Mobile Modal */
+.is-mobile .modal-container {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    max-width: none;
+}
+
+.is-mobile .modal-body {
+    flex-direction: column;
+}
+
+.is-mobile .unknown-cards-sidebar {
+    width: 100%;
+    height: auto;
+    min-height: 60px;
+    max-height: 150px;
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.is-mobile .unknown-cards-sidebar ul {
+    display: flex;
+    overflow-x: auto;
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+}
+
+.is-mobile .unknown-cards-sidebar li {
+    white-space: nowrap;
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+/* Mobile FAB Button */
+.is-mobile .mobile-fab {
+    display: flex;
+}
