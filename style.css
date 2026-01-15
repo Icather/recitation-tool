@@ -1392,6 +1392,37 @@ body:not(.review-mode-active) .mode-switch .mode-label:last-child {
     margin: 0;
 }
 
+.modal-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 清空存储按钮 */
+.btn-clear-storage {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--color-error);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-clear-storage:hover {
+    background: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.btn-clear-storage svg {
+    flex-shrink: 0;
+}
+
 .close-btn {
     padding: 4px;
     border-radius: var(--radius-sm);
@@ -1524,22 +1555,26 @@ body:not(.review-mode-active) .mode-switch .mode-label:last-child {
 
 .unknown-card-item .remove-btn {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 10px;
+    right: 10px;
     border: none;
     background: transparent;
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.3);
     cursor: pointer;
-    padding: 6px;
+    padding: 4px;
     border-radius: var(--radius-sm);
     transition: all 0.2s;
-    opacity: 0.5;
+    line-height: 0;
+}
+
+.unknown-card-item .remove-btn svg {
+    width: 14px;
+    height: 14px;
 }
 
 .unknown-card-item .remove-btn:hover {
-    background: rgba(239, 68, 68, 0.15);
-    color: var(--color-error);
-    opacity: 1;
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .empty-state {
@@ -1923,6 +1958,33 @@ body.is-mobile {
     white-space: nowrap;
     margin-bottom: 0;
     flex-shrink: 0;
+}
+
+/* 移动端模态窗口头部 */
+.is-mobile .modal-header {
+    padding: 16px;
+}
+
+.is-mobile .modal-header h3 {
+    font-size: 1.1rem;
+}
+
+.is-mobile .modal-header-actions {
+    gap: 8px;
+}
+
+.is-mobile .btn-clear-storage {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+}
+
+.is-mobile .btn-clear-storage span {
+    display: none;
+}
+
+/* 移动端卡片删除按钮优化 */
+.is-mobile .unknown-card-item .remove-btn {
+    padding: 8px;
 }
 
 /* Mobile FAB Button */

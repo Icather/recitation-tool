@@ -65,6 +65,7 @@
         viewUnknownCardsBtn: document.getElementById('view-unknown-cards-btn'),
         unknownCardsModal: document.getElementById('unknown-cards-modal'),
         closeModalBtn: document.getElementById('close-modal-btn'),
+        clearStorageBtn: document.getElementById('clear-storage-btn'),
         unknownSourceList: document.getElementById('unknown-source-list'),
         unknownCardsContainer: document.getElementById('unknown-cards-container'),
 
@@ -78,9 +79,82 @@
     const semesterSelector = document.createElement('select');
     semesterSelector.id = 'semester-selector';
 
-    // 生疏本与熟悉度数据（内存存储，刷新即丢失）
-    const unknownCards = new Map();  // key: unique id (source+text), value: card data
-    const familiarCards = new Set(); // set of unique ids
+    // 生疏本与熟悉度数据（使用 localStorage 持久化存储）
+    const STORAGE_KEYS = {
+        UNKNOWN_CARDS: 'recitation_unknown_cards',
+        FAMILIAR_CARDS: 'recitation_familiar_cards'
+    };
+
+    // 从 localStorage 加载数据
+    function loadUnknownCardsFromStorage() {
+        try {
+            const data = localStorage.getItem(STORAGE_KEYS.UNKNOWN_CARDS);
+            if (data) {
+                const parsed = JSON.parse(data);
+                return new Map(parsed);
+            }
+        } catch (e) {
+            console.warn('加载生疏本数据失败:', e);
+        }
+        return new Map();
+    }
+
+    function loadFamiliarCardsFromStorage() {
+        try {
+            const data = localStorage.getItem(STORAGE_KEYS.FAMILIAR_CARDS);
+            if (data) {
+                const parsed = JSON.parse(data);
+                return new Set(parsed);
+            }
+        } catch (e) {
+            console.warn('加载熟悉度数据失败:', e);
+        }
+        return new Set();
+    }
+
+    // 保存数据到 localStorage
+    function saveUnknownCardsToStorage() {
+        try {
+            const data = JSON.stringify(Array.from(unknownCards.entries()));
+            localStorage.setItem(STORAGE_KEYS.UNKNOWN_CARDS, data);
+        } catch (e) {
+            console.warn('保存生疏本数据失败:', e);
+        }
+    }
+
+    function saveFamiliarCardsToStorage() {
+        try {
+            const data = JSON.stringify(Array.from(familiarCards));
+            localStorage.setItem(STORAGE_KEYS.FAMILIAR_CARDS, data);
+        } catch (e) {
+            console.warn('保存熟悉度数据失败:', e);
+        }
+    }
+
+    // 清空所有存储（完全清理 localStorage 中的相关数据）
+    function clearAllStorage() {
+        if (confirm('确定要清空所有存储数据吗？此操作将清除所有生疏本记录和熟悉度数据，且无法恢复。')) {
+            // 清空 localStorage
+            localStorage.removeItem(STORAGE_KEYS.UNKNOWN_CARDS);
+            localStorage.removeItem(STORAGE_KEYS.FAMILIAR_CARDS);
+
+            // 清空内存数据
+            unknownCards.clear();
+            familiarCards.clear();
+
+            // 更新复习模式中的按钮状态
+            document.querySelectorAll('.mark-btn.active').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // 重新渲染模态窗口
+            renderUnknownCardsModal();
+        }
+    }
+
+    // 初始化数据（从 localStorage 加载）
+    const unknownCards = loadUnknownCardsFromStorage();  // key: unique id (source+text), value: card data
+    const familiarCards = loadFamiliarCardsFromStorage(); // set of unique ids
     let currentReviewQuestions = [];  // 当前显示的题目
     const selectedTextsForReview = new Set(); // 复习模式下选中的篇目ID
 
@@ -997,7 +1071,10 @@
             btnElement.classList.add('active');
             // 从熟悉中移除
             familiarCards.delete(uid);
+            saveFamiliarCardsToStorage();
         }
+        // 保存到 localStorage
+        saveUnknownCardsToStorage();
     }
 
     // 检查并设置熟悉状态
@@ -1015,6 +1092,8 @@
 
         if (allRevealed && blanks.length > 0) {
             familiarCards.add(uid);
+            // 保存到 localStorage
+            saveFamiliarCardsToStorage();
         }
     }
 
@@ -1208,6 +1287,8 @@
             removeBtn.title = '移除';
             removeBtn.addEventListener('click', function () {
                 unknownCards.delete(card.uid);
+                // 保存到 localStorage
+                saveUnknownCardsToStorage();
                 // 更新复习模式中的按钮状态
                 const reviewBtn = document.querySelector(`.mark-btn[data-uid="${card.uid}"]`);
                 if (reviewBtn) {
@@ -1230,6 +1311,9 @@
     }
     if (DOM.closeModalBtn) {
         DOM.closeModalBtn.addEventListener('click', closeUnknownCardsModal);
+    }
+    if (DOM.clearStorageBtn) {
+        DOM.clearStorageBtn.addEventListener('click', clearAllStorage);
     }
     if (DOM.unknownCardsModal) {
         DOM.unknownCardsModal.addEventListener('click', function (e) {
