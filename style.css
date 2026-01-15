@@ -122,12 +122,17 @@ body {
 }
 
 .logo h1 {
-    font-size: 1.5rem;
+    font-size: clamp(0.65rem, 2.5vw, 1.2rem);
     font-weight: 800;
     background: linear-gradient(135deg, var(--color-text-main) 0%, var(--color-primary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
     letter-spacing: -0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .header-actions .icon-link {
@@ -1990,4 +1995,28 @@ body.is-mobile {
 /* Mobile FAB Button */
 .is-mobile .mobile-fab {
     display: flex;
+}
+
+/* Mobile Header and Logo Title */
+.is-mobile .app-header {
+    padding: 0 var(--spacing-sm);
+    gap: var(--spacing-xs);
+    height: auto;
+    min-height: var(--header-height);
+    flex-wrap: wrap;
+}
+
+.is-mobile .logo {
+    flex: 1;
+    min-width: 0;
+    overflow: visible;
+}
+
+.is-mobile .logo h1 {
+    font-size: clamp(0.45rem, 3vw, 0.85rem);
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 1.3;
+    word-break: break-word;
 }
