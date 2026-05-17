@@ -44,6 +44,9 @@ ehthumbs.db
 
 # === 项目特定忽略规则 ===
 
+# Agent skills 配置
+.agent/skills/
+
 # 此项目为纯HTML/CSS/JS静态网站，不需要额外的构建工具或依赖管理
 # 如需使用npm等工具管理依赖，可取消注释以下行
 

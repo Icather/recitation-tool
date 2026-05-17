@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/📚-文言文背诵助手-8B5CF6?style=for-the-badge" alt="文言文背诵助手" />
+  <img src="https://img.shields.io/badge/📚-文言文背诵助手-8B5CF6?style=flat" alt="文言文背诵助手" />
 </p>
 
 <h3 align="center">基于认知科学理论的文言文辅助记忆工具</h3>
@@ -10,18 +10,18 @@
 
 <p align="center">
   <a href="https://recitation-tool.pages.dev/">
-    <img src="https://img.shields.io/badge/🌐_在线体验-recitation--tool.pages.dev-4F46E5?style=flat-square" alt="在线体验" />
+    <img src="https://img.shields.io/badge/🌐_在线体验-recitation--tool.pages.dev-4F46E5?style=flat" alt="在线体验" />
   </a>
   &nbsp;
   <a href="https://github.com/Icather/recitation-tool">
-    <img src="https://img.shields.io/github/stars/Icather/recitation-tool?style=flat-square&color=f59e0b" alt="GitHub Stars" />
+    <img src="https://img.shields.io/github/stars/Icather/recitation-tool?style=flat&color=f59e0b" alt="GitHub Stars" />
   </a>
   &nbsp;
   <a href="LICENSE.txt">
-    <img src="https://img.shields.io/badge/license-AGPL--3.0-22c55e?style=flat-square" alt="License" />
+    <img src="https://img.shields.io/badge/license-AGPL--3.0-22c55e?style=flat" alt="License" />
   </a>
   &nbsp;
-  <img src="https://img.shields.io/badge/依赖-零依赖_纯前端-06b6d4?style=flat-square" alt="零依赖" />
+  <img src="https://img.shields.io/badge/依赖-零依赖_纯前端-06b6d4?style=flat" alt="零依赖" />
 </p>
 
 <p align="center">
