@@ -4,6 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="基于认知科学理论的文言文辅助记忆工具。通过测试效应与生成效应，帮助中学生高效背诵文言文。支持多种挖空策略和智能复习模式。">
+    <meta name="keywords" content="文言文,背诵,高考语文,古文,记忆,挖空练习,复习">
+    <meta property="og:title" content="文言文背诵助手">
+    <meta property="og:description" content="基于认知科学理论的文言文辅助记忆工具，支持挖空练习与智能复习双模式。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://recitation-tool.pages.dev/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1F4DA;</text></svg>">
     <title>文言文背诵助手</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -24,7 +31,7 @@
                 <div class="mode-switch">
                     <span class="mode-label">复习模式</span>
                     <label class="switch">
-                        <input type="checkbox" id="mode-toggle">
+                        <input type="checkbox" id="mode-toggle" aria-label="Toggle recitation and review mode">
                         <span class="slider round"></span>
                     </label>
                     <span class="mode-label">背诵模式</span>
@@ -84,12 +91,12 @@
                     <div class="toolbar">
                         <div class="toolbar-group">
                             <div class="tool-item" title="常规挖空">
-                                <input type="checkbox" id="regular-mode" checked>
+                                <input type="checkbox" id="regular-mode" checked aria-label="Regular blank mode">
                                 <label for="regular-mode">常规</label>
                             </div>
                             <div class="tool-item inputs slider-group">
                                 <label>间隔</label>
-                                <input type="number" id="interval" min="1" value="3">
+                                <input type="number" id="interval" min="1" value="3" aria-label="Blank interval">
                                 <div class="slider-container">
                                     <input type="range" id="interval-slider" min="1" max="20" value="3">
                                 </div>
@@ -100,7 +107,7 @@
                             </div>
                             <div class="tool-item inputs slider-group">
                                 <label>起始</label>
-                                <input type="number" id="start" min="0" value="1">
+                                <input type="number" id="start" min="0" value="1" aria-label="Start offset">
                                 <div class="slider-container">
                                     <input type="range" id="start-slider" min="0" max="10" value="1">
                                 </div>
@@ -115,12 +122,12 @@
 
                         <div class="toolbar-group">
                             <div class="tool-item" title="随机挖空">
-                                <input type="checkbox" id="random-mode">
+                                <input type="checkbox" id="random-mode" aria-label="Random blank mode">
                                 <label for="random-mode">随机</label>
                             </div>
                             <div class="tool-item inputs slider-group">
                                 <label>频率%</label>
-                                <input type="number" id="random-ratio" min="1" max="100" value="30">
+                                <input type="number" id="random-ratio" min="1" max="100" value="30" aria-label="Random ratio percent">
                                 <div class="slider-container">
                                     <input type="range" id="random-ratio-slider" min="1" max="100" value="30">
                                 </div>
@@ -135,7 +142,7 @@
 
                         <div class="toolbar-group">
                             <div class="tool-item" title="仅显示句首字">
-                                <input type="checkbox" id="first-char-mode">
+                                <input type="checkbox" id="first-char-mode" aria-label="First character mode">
                                 <label for="first-char-mode">首字</label>
                             </div>
                         </div>

@@ -10,6 +10,34 @@
         MIN_RANDOM_RATIO: 1
     };
 
+    // ==========================================================================
+    // 工具函数（模块顶层，避免重复创建）
+    // ==========================================================================
+
+    /** 判断是否为中文字符 */
+    function isChineseChar(char) {
+        return /[\u4e00-\u9fa5]/.test(char);
+    }
+
+    /** 判断是否为句子结束符 */
+    function isSentenceEnd(char) {
+        return /[。！？；，]/.test(char);
+    }
+
+    /**
+     * Fisher-Yates 标准洗牌算法
+     * 保证均匀随机分布，O(n) 时间复杂度
+     * @param {Array} array - 待洗牌数组（原地修改）
+     * @returns {Array} 洗牌后的数组
+     */
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
     // 获取DOM元素
     const DOM = {
         // 核心输入输出
@@ -195,16 +223,6 @@
             DOM.randomRatioInput.value = randomRatio;
         }
 
-        // 判断是否为中文字符
-        function isChineseChar(char) {
-            return /[\u4e00-\u9fa5]/.test(char);
-        }
-
-        // 判断是否为句子结束符
-        function isSentenceEnd(char) {
-            return /[。！？；，]/.test(char);
-        }
-
         // 仅显示句首字模式
         if (isFirstCharModeEnabled) {
             let result = '';
@@ -248,7 +266,7 @@
         const randomReplacePositions = new Set();
         if (isRandomModeEnabled && chineseCharPositions.length > 0) {
             const randomCount = Math.floor(chineseCharPositions.length * (randomRatio / 100));
-            const shuffledPositions = [...chineseCharPositions].sort(() => Math.random() - 0.5);
+            const shuffledPositions = shuffleArray([...chineseCharPositions]);
             for (let i = 0; i < randomCount; i++) {
                 randomReplacePositions.add(shuffledPositions[i]);
             }
@@ -693,7 +711,7 @@
             validTexts = validTexts.filter(text => selectedTextsForReview.has(text.id));
         }
 
-        const shuffled = [...validTexts].sort(() => Math.random() - 0.5);
+        const shuffled = shuffleArray([...validTexts]);
         return shuffled.slice(0, Math.min(count, shuffled.length));
     }
 
@@ -1328,7 +1346,8 @@
     // 移动端设备检测与侧边栏控制
     // ==========================================================================
     function isMobileDevice() {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        return window.matchMedia('(pointer: coarse)').matches ||
+               window.matchMedia('(max-width: 768px)').matches;
     }
 
     function initMobileSupport() {

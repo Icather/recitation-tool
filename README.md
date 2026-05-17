@@ -201,6 +201,8 @@ recitation-tool/
 4. 推送到分支 (`git push origin feature/amazing-feature`)
 5. 提交 Pull Request
 
+📬 也可以通过邮件联系：**icather@163.com**
+
 ---
 
 ## 📄 许可证
