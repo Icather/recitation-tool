@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="header-actions">
-                <a href="intro.html" class="icon-link" title="项目介绍">
+                <a href="intro.html" class="icon-link" title="项目介绍" aria-label="项目介绍">
                     <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="16" x2="12" y2="12"></line>
@@ -55,7 +55,7 @@
             <!-- 左侧边栏：篇目列表 -->
             <aside class="sidebar">
                 <div class="sidebar-header">
-                    <h3>篇目列表</h3>
+                    <h2>篇目列表</h2>
                 </div>
                 <div class="sidebar-content">
                     <div id="texts-list-view" class="content-view active">
@@ -183,7 +183,7 @@
                     </div>
 
                     <!-- 移动端处理按钮 (桌面端通过切换视图自动处理) -->
-                    <button id="process-btn" class="mobile-fab">
+                    <button id="process-btn" class="mobile-fab" aria-label="开始背诵">
                         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2"
                             fill="none">
                             <polyline points="20 6 9 17 4 12"></polyline>
@@ -211,7 +211,7 @@
                                     <span class="combo-label">隐藏篇目/作者/朝代</span>
                                 </div>
                                 <div class="combo-separator"></div>
-                                <div class="combo-trigger" id="hide-dropdown-trigger" role="button" tabindex="0">
+                                <div class="combo-trigger" id="hide-dropdown-trigger" role="button" tabindex="0" aria-label="展开或收起隐藏选项">
                                     <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor"
                                         stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="6 9 12 15 18 9"></polyline>
@@ -266,7 +266,7 @@
     <div id="unknown-cards-modal" class="modal-overlay hidden">
         <div class="modal-container">
             <div class="modal-header">
-                <h3>生疏本</h3>
+                <h2>生疏本</h2>
                 <div class="modal-header-actions">
                     <button id="clear-storage-btn" class="btn-clear-storage" title="清空存储">
                         <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2"
@@ -277,7 +277,7 @@
                         </svg>
                         清空存储
                     </button>
-                    <button id="close-modal-btn" class="icon-btn close-btn">
+                    <button id="close-modal-btn" class="icon-btn close-btn" aria-label="关闭生疏本">
                         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2"
                             fill="none">
                             <line x1="18" y1="6" x2="6" y2="18"></line>

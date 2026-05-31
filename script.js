@@ -106,6 +106,7 @@
     let reviewQuestionsGenerated = false;
     const semesterSelector = document.createElement('select');
     semesterSelector.id = 'semester-selector';
+    semesterSelector.setAttribute('aria-label', '选择学期册次');
 
     // 生疏本与熟悉度数据（使用 localStorage 持久化存储）
     const STORAGE_KEYS = {
@@ -905,7 +906,7 @@
             const source = document.createElement('div');
             source.className = 'sentence-source';
             source.style.marginTop = '10px';
-            source.style.color = '#666';
+            source.style.color = 'var(--color-text-muted)';
             source.style.fontSize = '0.9rem';
 
             // 构建来源文本，支持联动隐藏作者和朝代

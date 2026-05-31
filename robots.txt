@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://recitation-tool.pages.dev/sitemap.xml
